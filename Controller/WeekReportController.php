@@ -187,15 +187,18 @@ class WeekReportController extends BaseApprovalController
         $pastRows = [];
         $currentRows = [];
         $futureRows = [];
-        $currentWeek = (new DateTime('now'))->modify('next sunday')->modify('-2 week')->format('Y-m-d');
-        $futureWeek = (new DateTime('now'))->modify('next sunday')->modify('-1 week')->format('Y-m-d');
+        $today = new \DateTime('today');
+        $thisSunday = (clone $today)->modify('last sunday');
+        $nextSunday = (clone $thisSunday)->modify('+1 week');
+
         foreach ($allRows as $row) {
-            if ($row['startDate'] >= $futureWeek) {
-                $futureRows[] = $row;
-            } elseif ($row['startDate'] >= $currentWeek) {
-                $currentRows[] = $row;
-            } else {
+            $rowStart = new \DateTime($row['startDate']);
+            if ($rowStart < $thisSunday) {
                 $pastRows[] = $row;
+            } elseif ($rowStart >= $nextSunday) {
+                $futureRows[] = $row;
+            } else {
+                $currentRows[] = $row;
             }
         }
         $pastRows = $this->approvalRepository->filterPastWeeksNotApproved($pastRows);
