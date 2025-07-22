@@ -67,12 +67,6 @@ class WeekReportController extends BaseApprovalController
     public function weekByUser(Request $request): Response
     {
         // Check if all users have Sunday as the first day of the week
-        $usersToCheck = $this->userRepository->findAll();
-        foreach ($usersToCheck as $user) {
-            if (!$user->isFirstDayOfWeekSunday()) {
-                throw new \RuntimeException('Plugin only works if all users have Sunday as the first day of the week.');
-            }
-        }
 
         $users = $this->getUsers();
         $firstUser = empty($users) ? $this->getUser() : $users[0];
