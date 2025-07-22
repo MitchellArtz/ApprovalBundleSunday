@@ -167,6 +167,12 @@ class ApprovalController extends BaseApprovalController
             return $this->approvalRepository->find($approve->getId());
         } else {
             $startDate = new DateTime($date);
+            
+            // Ensure startDate is always a Sunday
+            if ($startDate->format('D') !== 'Sun') {
+                $startDate->modify('last sunday');
+            }
+            
             $endDate = (clone $startDate)->modify('next sunday');
 
             return $this->approvalRepository->findOneBy(['startDate' => $startDate, 'endDate' => $endDate, 'user' => $user], ['id' => 'DESC']);

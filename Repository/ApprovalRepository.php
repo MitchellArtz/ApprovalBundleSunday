@@ -97,6 +97,12 @@ class ApprovalRepository extends ServiceEntityRepository
     public function createApproval(string $data, User $user): ?Approval
     {
         $startDate = new DateTime($data);
+        
+        // Ensure startDate is always a Sunday
+        if ($startDate->format('D') !== 'Sun') {
+            $startDate->modify('last sunday');
+        }
+        
         $endDate = (clone $startDate)->modify('next sunday');
         date_time_set($endDate, 23, 59, 59);
 
@@ -324,15 +330,21 @@ class ApprovalRepository extends ServiceEntityRepository
     {
         return array_reduce($approvedList, function ($current, Approval $item) {
             if (!empty($item->getHistory())) {
+                // Normalize startDate to Sunday for display purposes
+                $startDate = clone $item->getStartDate();
+                if ($startDate->format('D') !== 'Sun') {
+                    $startDate->modify('last sunday');
+                }
+                
                 $current[] =
                     [
                         'userId' => $item->getUser()->getId(),
-                        'startDate' => $item->getStartDate()->format('Y-m-d'),
+                        'startDate' => $startDate->format('Y-m-d'),
                         'endDate' => $item->getEndDate()->format('Y-m-d'),
                         'expectedDuration' => $item->getExpectedDuration(),
                         'actualDuration' => $item->getActualDuration(),
                         'user' => $item->getUser()->getDisplayName(),
-                        'week' => $this->formatting->parseDate(clone $item->getStartDate()),
+                        'week' => $this->formatting->parseDate($startDate),
                         'status' => $item->getHistory()[0]->getStatus()->getName()
                     ];
             }
