@@ -118,8 +118,8 @@ class WeekReportController extends BaseApprovalController
 
         [$timesheets, $errors] = $this->getTimesheets($selectedUser, $start, $end);
 
-        $selectedUserSundayIssue = $selectedUser->isFirstDayOfWeekSunday();
-        $currentUserSundayIssue = $this->getUser()->isFirstDayOfWeekSunday();
+        $selectedUserSundayIssue = !$selectedUser->isFirstDayOfWeekSunday();
+        $currentUserSundayIssue = !$this->getUser()->isFirstDayOfWeekSunday();
 
         $overtimeDuration = null;
         if ($this->settingsTool->isOvertimeCheckActive()) {

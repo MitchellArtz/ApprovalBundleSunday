@@ -156,11 +156,11 @@
       </trans-unit>
       <trans-unit id="olL6IjD" resname="warning.selected_user_sunday_issue">
         <source>warning.selected_user_sunday_issue</source>
-        <target>Selected user has Sunday as start of the week - this is not supported for Approval Plugin.</target>
+        <target>Selected user has Monday as start of the week - this is not supported for Approval Plugin.</target>
       </trans-unit>
       <trans-unit id="9WCJXXi" resname="warning.currentUserSundayIssue">
         <source>warning.currentUserSundayIssue</source>
-        <target>Sunday as start of the week setting available - this is not supported for Approval Plugin.</target>
+        <target>Monday as start of the week setting available - this is not supported for Approval Plugin.</target>
       </trans-unit>
       <trans-unit id="4G_M.Dn" resname="submitted">
         <source>submitted</source>
