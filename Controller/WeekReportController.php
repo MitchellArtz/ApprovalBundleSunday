@@ -74,7 +74,11 @@ class WeekReportController extends BaseApprovalController
 
         $values = new WeekByUser();
         $values->setUser($firstUser);
-        $values->setDate($dateTimeFactory->getStartOfWeek());
+        
+        // Force Sunday as start of week regardless of user preference
+        $today = new DateTime('today');
+        $sundayStart = (clone $today)->modify('last sunday');
+        $values->setDate($sundayStart);
 
         $form = $this->createFormForGetRequest(WeekByUserForm::class, $values, [
             'timezone' => $dateTimeFactory->getTimezone()->getName(),
@@ -89,11 +93,17 @@ class WeekReportController extends BaseApprovalController
         }
 
         if ($values->getDate() === null) {
-            $values->setDate($dateTimeFactory->getStartOfWeek());
+            // Force Sunday as start of week regardless of user preference
+            $today = new DateTime('today');
+            $sundayStart = (clone $today)->modify('last sunday');
+            $values->setDate($sundayStart);
         }
 
-        $start = $dateTimeFactory->getStartOfWeek($values->getDate());
-        $end = $dateTimeFactory->getEndOfWeek($values->getDate());
+        // Force Sunday as start of week regardless of user preference
+        $start = (clone $values->getDate())->modify('last sunday');
+        $end = (clone $start)->modify('next saturday');
+        date_time_set($end, 23, 59, 59);
+        
         $selectedUser = $values->getUser();
         $startWeek = $values->getDate();
 

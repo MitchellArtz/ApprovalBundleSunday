@@ -121,7 +121,6 @@ final class ApprovalBundleApiController extends BaseApiController
         if ($selectedDate->format('N') != 7) {
             $selectedDate->modify('previous Sunday');
         }
-
         return $selectedDate;
     }
 
