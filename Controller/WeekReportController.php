@@ -100,7 +100,10 @@ class WeekReportController extends BaseApprovalController
         }
 
         // Force Sunday as start of week regardless of user preference
-        $start = (clone $values->getDate())->modify('last sunday');
+        $start = clone $values->getDate();
+        if ($start->format('D') !== 'Sun') {
+            $start->modify('last sunday');
+        }
         $end = (clone $start)->modify('next saturday');
         date_time_set($end, 23, 59, 59);
         
