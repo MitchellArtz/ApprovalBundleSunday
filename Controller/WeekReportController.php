@@ -164,11 +164,11 @@ class WeekReportController extends BaseApprovalController
     {
         // Check if all users have Sunday as the first day of the week
         $usersToCheck = $this->userRepository->findAll();
-        foreach ($usersToCheck as $user) {
-            if (!$user->isFirstDayOfWeekSunday()) {
-                throw new \RuntimeException('Plugin only works if all users have Sunday as the first day of the week.');
-            }
-        }
+        // foreach ($usersToCheck as $user) {
+        //     if (!$user->isFirstDayOfWeekSunday()) {
+        //         throw new \RuntimeException('Plugin only works if all users have Sunday as the first day of the week.');
+        //     }
+        // }
 
         if ($this->settingsTool->getConfiguration(ConfigEnum::APPROVAL_TEAMLEAD_SELF_APPROVE_NY) == '1') {
             $users = $this->getUsers(true);
