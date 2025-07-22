@@ -78,8 +78,8 @@ final class ApprovalStatusApiController extends BaseApiController
     private function getSelectedDate(Request $request): DateTime
     {
         $selectedDate = new DateTime($request->query->get('date', 'today'));
-        if ($selectedDate->format('N') != 1) {
-            $selectedDate->modify('previous Monday');
+        if ($selectedDate->format('N') != 7) {
+            $selectedDate->modify('previous Sunday');
         }
 
         return $selectedDate;

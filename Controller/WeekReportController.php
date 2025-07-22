@@ -66,6 +66,14 @@ class WeekReportController extends BaseApprovalController
     #[Route(path: '/week_by_user', name: 'approval_bundle_report', methods: ['GET', 'POST'])]
     public function weekByUser(Request $request): Response
     {
+        // Check if all users have Sunday as the first day of the week
+        $usersToCheck = $this->userRepository->findAll();
+        foreach ($usersToCheck as $user) {
+            if (!$user->isFirstDayOfWeekSunday()) {
+                throw new \RuntimeException('Plugin only works if all users have Sunday as the first day of the week.');
+            }
+        }
+
         $users = $this->getUsers();
         $firstUser = empty($users) ? $this->getUser() : $users[0];
         $dateTimeFactory = $this->getDateTimeFactory($firstUser);
@@ -160,6 +168,14 @@ class WeekReportController extends BaseApprovalController
     #[IsGranted(new Expression("is_granted('view_team_approval') or is_granted('view_all_approval')"))]
     public function toApprove(): Response
     {
+        // Check if all users have Sunday as the first day of the week
+        $usersToCheck = $this->userRepository->findAll();
+        foreach ($usersToCheck as $user) {
+            if (!$user->isFirstDayOfWeekSunday()) {
+                throw new \RuntimeException('Plugin only works if all users have Sunday as the first day of the week.');
+            }
+        }
+
         if ($this->settingsTool->getConfiguration(ConfigEnum::APPROVAL_TEAMLEAD_SELF_APPROVE_NY) == '1') {
             $users = $this->getUsers(true);
         } else {
@@ -177,8 +193,8 @@ class WeekReportController extends BaseApprovalController
         $pastRows = [];
         $currentRows = [];
         $futureRows = [];
-        $currentWeek = (new DateTime('now'))->modify('next monday')->modify('-2 week')->format('Y-m-d');
-        $futureWeek = (new DateTime('now'))->modify('next monday')->modify('-1 week')->format('Y-m-d');
+        $currentWeek = (new DateTime('now'))->modify('next sunday')->modify('-2 week')->format('Y-m-d');
+        $futureWeek = (new DateTime('now'))->modify('next sunday')->modify('-1 week')->format('Y-m-d');
         foreach ($allRows as $row) {
             if ($row['startDate'] >= $futureWeek) {
                 $futureRows[] = $row;

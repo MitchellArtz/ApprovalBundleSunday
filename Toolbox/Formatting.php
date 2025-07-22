@@ -22,13 +22,13 @@ final class Formatting
     {
         $weekNumber = (clone $dateTime)->format('W');
 
-        if ((clone $dateTime)->format('D') === 'Mon') {
+        if ((clone $dateTime)->format('D') === 'Sun') {
             $startWeekDay = (clone $dateTime)->format('d.m.Y');
         } else {
-            $startWeekDay = (clone $dateTime)->modify('last monday')->format('d.m.Y');
+            $startWeekDay = (clone $dateTime)->modify('last sunday')->format('d.m.Y');
         }
 
-        $endWeekDay = (clone $dateTime)->modify('next sunday')->format('d.m.Y');
+        $endWeekDay = (clone $dateTime)->modify('next saturday')->format('d.m.Y');
 
         return (clone $dateTime)->format('F Y') . ' - ' . $this->translator->trans('agendaWeek') . ' ' . $weekNumber . ' [' . $startWeekDay . ' - ' . $endWeekDay . ']';
     }

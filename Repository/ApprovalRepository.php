@@ -373,8 +373,8 @@ class ApprovalRepository extends ServiceEntityRepository
         }
         $approval_ws_start_week = (new DateTime($approval_workflow_start))->modify('-7 day')->format('Y-m-d');
 
-        if ($firstDay->format('D') !== 'Mon') {
-            $firstDay = clone new DateTime($firstDay->modify('last monday')->format('Y-m-d H:i:s'));
+        if ($firstDay->format('D') !== 'Sun') {
+            $firstDay = clone new DateTime($firstDay->modify('last sunday')->format('Y-m-d H:i:s'));
         }
         while ($firstDay <= new DateTime('today')) {
             if (!\in_array($firstDay, $approvedWeeks) && $firstDay->format('Y-m-d') > $approval_ws_start_week) {
@@ -383,7 +383,7 @@ class ApprovalRepository extends ServiceEntityRepository
                     'value' => (clone $firstDay)->format('Y-m-d')
                 ];
             }
-            $firstDay->modify('next monday');
+            $firstDay->modify('next sunday');
         }
 
         array_pop($weeks);
