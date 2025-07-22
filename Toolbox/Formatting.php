@@ -22,15 +22,16 @@ final class Formatting
     {
         $weekNumber = (clone $dateTime)->format('W');
 
-        if ((clone $dateTime)->format('D') === 'Sun') {
-            $startWeekDay = (clone $dateTime)->format('d.m.Y');
-        } else {
-            $startWeekDay = (clone $dateTime)->modify('last sunday')->format('d.m.Y');
+        // Ensure we're working with the start of the week (Sunday)
+        $startOfWeek = clone $dateTime;
+        if ($startOfWeek->format('D') !== 'Sun') {
+            $startOfWeek->modify('last sunday');
         }
+        
+        $startWeekDay = $startOfWeek->format('d.m.Y');
+        $endWeekDay = (clone $startOfWeek)->modify('+6 days')->format('d.m.Y');
 
-        $endWeekDay = (clone $dateTime)->modify('next saturday')->format('d.m.Y');
-
-        return (clone $dateTime)->format('F Y') . ' - ' . $this->translator->trans('agendaWeek') . ' ' . $weekNumber . ' [' . $startWeekDay . ' - ' . $endWeekDay . ']';
+        return $startOfWeek->format('F Y') . ' - ' . $this->translator->trans('agendaWeek') . ' ' . $weekNumber . ' [' . $startWeekDay . ' - ' . $endWeekDay . ']';
     }
 
     public function formatDuration(int $duration): string
