@@ -26,7 +26,7 @@ class MenuSubscriber implements EventSubscriberInterface
     {
         $model = new MenuItemModel(
             'approvalBundle',
-            'title.approval_bundle',
+            'Hours Approval - DEMO',
             'approval_bundle_report',
             [],
             'fas fa-thumbs-up',

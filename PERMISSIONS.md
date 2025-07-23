@@ -2,6 +2,11 @@
 
 This document describes the permissions used by the Approval Bundle.
 
+## Bundle Information
+
+- **Title**: Hours Approval - DEMO
+- **Support Contact**: Mitchell Artz
+
 ## Available Permissions
 
 ### `view_team_approval`
@@ -43,4 +48,8 @@ If settings pages are not accessible:
 
 1. **Check Role**: Ensure the user has the `ROLE_SUPER_ADMIN` role
 2. **Check Permissions**: Verify the user has the necessary approval permissions (`view_team_approval` or `view_all_approval`)
-3. **Clear Cache**: Clear Symfony cache if changes were made to roles or permissions 
+3. **Clear Cache**: Clear Symfony cache if changes were made to roles or permissions
+
+## Support
+
+For technical support or questions about this bundle, please contact **Mitchell Artz**. 

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% import "macros/widgets.html.twig" as widgets %}
 
-{% block page_title %}{{ 'menu.approval_bundle'|trans }}{% endblock %}
+{% block page_title %}Hours Approval - DEMO{% endblock %}
 
 {% block main %}
     {% if warningNoUsers is defined %}
@@ -22,6 +22,15 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Support Contact Information -->
+    <div class="row mt-3">
+        <div class="col-md-12 text-end">
+            <small class="text-muted">
+                <i class="fas fa-life-ring"></i> For support reach <strong>Mitchell Artz</strong>
+            </small>
         </div>
     </div>
 {% endblock %}
