@@ -104,7 +104,7 @@ class WeekReportController extends BaseApprovalController
         if ($start->format('D') !== 'Sun') {
             $start->modify('last sunday');
         }
-        $end = (clone $start)->modify('next saturday');
+        $end = (clone $start)->modify('+6 days');
         date_time_set($end, 23, 59, 59);
         
         $selectedUser = $values->getUser();
@@ -226,6 +226,7 @@ class WeekReportController extends BaseApprovalController
     }
 
     #[Route(path: '/settings', name: 'approval_bundle_settings', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function settings(Request $request): Response
     {
         return $this->render('@Approval/settings.html.twig', [
@@ -236,6 +237,7 @@ class WeekReportController extends BaseApprovalController
     }
 
     #[Route(path: '/settings_workday_history', name: 'approval_bundle_settings_workday', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function settingsWorkdayHistory(Request $request): Response
     {
         $workdayHistory = $this->approvalWorkdayHistoryRepository->findAll();

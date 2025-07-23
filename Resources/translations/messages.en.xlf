@@ -114,6 +114,7 @@
         <source>menu.settings</source>
         <target>Settings</target>
       </trans-unit>
+
       <trans-unit id="G_t_3Se" resname="stats.duration_total">
         <source>stats.duration_total</source>
         <target>Total duration</target>

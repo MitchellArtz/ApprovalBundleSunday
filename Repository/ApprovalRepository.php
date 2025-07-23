@@ -103,7 +103,7 @@ class ApprovalRepository extends ServiceEntityRepository
             $startDate->modify('last sunday');
         }
         
-        $endDate = (clone $startDate)->modify('next sunday');
+        $endDate = (clone $startDate)->modify('+6 days');
         date_time_set($endDate, 23, 59, 59);
 
         $approval = $this->checkLastStatus($startDate, $endDate, $user, ApprovalStatus::NOT_SUBMITTED, new Approval());
@@ -429,7 +429,12 @@ class ApprovalRepository extends ServiceEntityRepository
         return array_reduce(
             $approval,
             function ($array, $value) {
-                $array[] = $value->getStartDate();
+                // Normalize startDate to Sunday for comparison
+                $startDate = clone $value->getStartDate();
+                if ($startDate->format('D') !== 'Sun') {
+                    $startDate->modify('last sunday');
+                }
+                $array[] = $startDate;
 
                 return $array;
             },

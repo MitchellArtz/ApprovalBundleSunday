@@ -173,7 +173,7 @@ class ApprovalController extends BaseApprovalController
                 $startDate->modify('last sunday');
             }
             
-            $endDate = (clone $startDate)->modify('next sunday');
+            $endDate = (clone $startDate)->modify('+6 days');
 
             return $this->approvalRepository->findOneBy(['startDate' => $startDate, 'endDate' => $endDate, 'user' => $user], ['id' => 'DESC']);
         }
