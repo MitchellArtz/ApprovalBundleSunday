@@ -14,7 +14,9 @@
         <div class="col-md-12" id="ApprovalBundle-content">
             <div class="card">
                 <div class="card-header">
-                    {{ include('@Approval/navigation.html.twig') }}
+                    {% if canViewHoursApproval %}
+                        {{ include('@Approval/navigation.html.twig') }}
+                    {% endif %}
                 </div>
                 <div class="card-body">
                     <div class="tab-content">

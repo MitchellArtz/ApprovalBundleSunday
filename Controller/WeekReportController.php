@@ -172,7 +172,7 @@ class WeekReportController extends BaseApprovalController
     }
 
     #[Route(path: '/to_approve', name: 'approval_bundle_to_approve', methods: ['GET', 'POST'])]
-    #[IsGranted(new Expression("is_granted('view_team_approval') or is_granted('view_all_approval')"))]
+    #[IsGranted('view_hours_approval')]
     public function toApprove(): Response
     {
         // Check if all users have Sunday as the first day of the week
@@ -226,7 +226,7 @@ class WeekReportController extends BaseApprovalController
     }
 
     #[Route(path: '/settings', name: 'approval_bundle_settings', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_SUPER_ADMIN')]
+    #[IsGranted('settings_hours_approval')]
     public function settings(Request $request): Response
     {
         return $this->render('@Approval/settings.html.twig', [

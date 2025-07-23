@@ -12,9 +12,20 @@ namespace KimaiPlugin\ApprovalBundle\EventSubscriber;
 use App\Event\ConfigureMainMenuEvent;
 use App\Utils\MenuItemModel;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use KimaiPlugin\ApprovalBundle\Repository\ApprovalRepository;
+use KimaiPlugin\ApprovalBundle\Toolbox\SecurityTool;
 
 class MenuSubscriber implements EventSubscriberInterface
 {
+    private ApprovalRepository $approvalRepository;
+    private SecurityTool $security;
+
+    public function __construct(ApprovalRepository $approvalRepository, SecurityTool $security)
+    {
+        $this->approvalRepository = $approvalRepository;
+        $this->security = $security;
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -24,6 +35,9 @@ class MenuSubscriber implements EventSubscriberInterface
 
     public function onMenuConfigure(ConfigureMainMenuEvent $event): void
     {
+        if (!$this->security->canViewHoursApproval()) {
+            return;
+        }
         $model = new MenuItemModel(
             'approvalBundle',
             'Hours Approval - DEMO',

@@ -34,12 +34,15 @@ class ApprovalExtension extends Extension implements PrependExtensionInterface
                 'roles' => [
                     'ROLE_SUPER_ADMIN' => [
                         'view_team_approval',
-                        'view_all_approval'
+                        'view_all_approval',
+                        'view_hours_approval',
+                        'settings_hours_approval'
                     ],
                     'ROLE_TEAMLEAD' => [
-                        'view_team_approval'
-                  ],
-              ],
+                        'view_team_approval',
+                        'view_hours_approval'
+                    ]
+                ],
             ],
         ]);
     }

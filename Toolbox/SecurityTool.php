@@ -19,6 +19,7 @@ class SecurityTool
     private ?array $cache = null;
     private ?bool $viewAll = null;
     private ?bool $viewTeam = null;
+    private ?bool $viewHours = null;
 
     public function __construct(private Security $security, private UserRepository $userRepository)
     {
@@ -51,6 +52,14 @@ class SecurityTool
         }
 
         return $this->viewTeam;
+    }
+
+    public function canViewHoursApproval(): bool
+    {
+        if ($this->viewHours === null) {
+            $this->viewHours = $this->security->isGranted('view_hours_approval');
+        }
+        return $this->viewHours;
     }
 
     /**

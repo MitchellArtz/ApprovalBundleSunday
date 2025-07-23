@@ -32,7 +32,7 @@ class SettingsOvertimeController extends BaseApprovalController
     }
 
     #[Route(path: '/settings_overtime', name: 'approval_settings_overtime_history', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_SUPER_ADMIN')]
+    #[IsGranted('settings_hours_approval')]
     public function settingsOvertime(Request $request): Response
     {
         if (!$this->settingsTool->isOvertimeCheckActive()) {

@@ -24,13 +24,25 @@ class BaseApprovalController extends AbstractController
         return $this->isGranted('view_all_approval');
     }
 
+    protected function canViewHoursApproval(): bool
+    {
+        return $this->isGranted('view_hours_approval');
+    }
+
+    protected function canViewSettingsHoursApproval(): bool
+    {
+        return $this->isGranted('settings_hours_approval');
+    }
+
     protected function getDefaultTemplateParams(SettingsTool $settingsTool): array
     {
         return [
-            'showToApproveTab' => $this->canManageAllPerson() || $this->canManageTeam(),
-            'showSettings' => $this->isGranted('ROLE_SUPER_ADMIN'),
+            'showToApproveTab' => $this->canViewHoursApproval(),
+            'showSettings' => $this->canViewSettingsHoursApproval(),
+            'showSettingsHoursApproval' => $this->canViewSettingsHoursApproval(),
             'showSettingsWorkdays' => $this->isGranted('ROLE_SUPER_ADMIN') && $settingsTool->isOvertimeCheckActive(),
-            'showOvertime' => $settingsTool->isOvertimeCheckActive()
+            'showOvertime' => $settingsTool->isOvertimeCheckActive(),
+            'canViewHoursApproval' => $this->canViewHoursApproval(),
         ];
     }
 }
