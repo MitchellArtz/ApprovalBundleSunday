@@ -11,6 +11,11 @@
             {{ 'menu.report_user_week' |trans }}
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link{% if current_tab == "approval_statistics" %} active{% endif %}" href="{{ path('approval_statistics_report') }}">
+            {{ 'menu.approval_statistics' |trans }}
+        </a>
+    </li>
     {% if showOvertime %}
         <li class="nav-item">
             <a class="nav-link{% if current_tab == "overtime_by_user" %} active{% endif %}" href="{{ path('overtime_bundle_report') }}">

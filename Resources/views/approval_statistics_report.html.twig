@@ -1,0 +1,143 @@
+{% extends '@Approval/layout.html.twig' %}
+{% import "macros/widgets.html.twig" as widgets %}
+
+{% block report_title %}{{ 'approval.statistics.report'|trans }}{% endblock %}
+
+{% block report %}
+    <div class="card">
+        <div class="card-header">
+            <h3>{{ 'approval.statistics.report'|trans }}</h3>
+        </div>
+        <div class="card-body">
+            {% if statistics is empty %}
+                <div class="alert alert-info">
+                    {{ 'approval.statistics.no_data'|trans }}
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-hover dataTable">
+                        <thead>
+                            <tr>
+                                <th>{{ 'user'|trans }}</th>
+                                <th class="text-center">{{ 'approval.status.not_submitted'|trans }}</th>
+                                <th class="text-center">{{ 'approval.status.submitted'|trans }}</th>
+                                <th class="text-center">{{ 'approval.status.pending'|trans }}</th>
+                                <th class="text-center">{{ 'approval.status.approved'|trans }}</th>
+                                <th class="text-center">{{ 'approval.status.denied'|trans }}</th>
+                                <th class="text-center">{{ 'total'|trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in statistics %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ stat.user.displayName }}</strong>
+                                    </td>
+                                    <td class="text-center">
+                                        {% if stat.unsubmitted > 0 %}
+                                            <span class="badge badge-warning">{{ stat.unsubmitted }}</span>
+                                        {% else %}
+                                            <span class="text-muted">0</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if stat.submitted > 0 %}
+                                            <span class="badge badge-info">{{ stat.submitted }}</span>
+                                        {% else %}
+                                            <span class="text-muted">0</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if stat.pending > 0 %}
+                                            <span class="badge badge-primary">{{ stat.pending }}</span>
+                                        {% else %}
+                                            <span class="text-muted">0</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if stat.approved > 0 %}
+                                            <span class="badge badge-success">{{ stat.approved }}</span>
+                                        {% else %}
+                                            <span class="text-muted">0</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if stat.denied > 0 %}
+                                            <span class="badge badge-danger">{{ stat.denied }}</span>
+                                        {% else %}
+                                            <span class="text-muted">0</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <strong>{{ stat.total }}</strong>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-active">
+                                <td><strong>{{ 'total'|trans }}</strong></td>
+                                <td class="text-center">
+                                    <strong>
+                                        {% set totalUnsubmitted = statistics|reduce((sum, stat) => sum + stat.unsubmitted, 0) %}
+                                        {% if totalUnsubmitted > 0 %}
+                                            <span class="badge badge-warning">{{ totalUnsubmitted }}</span>
+                                        {% else %}
+                                            <span class="text-muted">0</span>
+                                        {% endif %}
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>
+                                        {% set totalSubmitted = statistics|reduce((sum, stat) => sum + stat.submitted, 0) %}
+                                        {% if totalSubmitted > 0 %}
+                                            <span class="badge badge-info">{{ totalSubmitted }}</span>
+                                        {% else %}
+                                            <span class="text-muted">0</span>
+                                        {% endif %}
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>
+                                        {% set totalPending = statistics|reduce((sum, stat) => sum + stat.pending, 0) %}
+                                        {% if totalPending > 0 %}
+                                            <span class="badge badge-primary">{{ totalPending }}</span>
+                                        {% else %}
+                                            <span class="text-muted">0</span>
+                                        {% endif %}
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>
+                                        {% set totalApproved = statistics|reduce((sum, stat) => sum + stat.approved, 0) %}
+                                        {% if totalApproved > 0 %}
+                                            <span class="badge badge-success">{{ totalApproved }}</span>
+                                        {% else %}
+                                            <span class="text-muted">0</span>
+                                        {% endif %}
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>
+                                        {% set totalDenied = statistics|reduce((sum, stat) => sum + stat.denied, 0) %}
+                                        {% if totalDenied > 0 %}
+                                            <span class="badge badge-danger">{{ totalDenied }}</span>
+                                        {% else %}
+                                            <span class="text-muted">0</span>
+                                        {% endif %}
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>
+                                        {% set grandTotal = statistics|reduce((sum, stat) => sum + stat.total, 0) %}
+                                        {{ grandTotal }}
+                                    </strong>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %} 

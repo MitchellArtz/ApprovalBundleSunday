@@ -38,9 +38,11 @@ class MenuSubscriber implements EventSubscriberInterface
         if (!$this->security->canViewHoursApproval()) {
             return;
         }
+        
+        // Main approval menu
         $model = new MenuItemModel(
             'approvalBundle',
-            'Hours Approval - DEMO',
+            'Timesheet Approval',
             'approval_bundle_report',
             [],
             'fas fa-thumbs-up',

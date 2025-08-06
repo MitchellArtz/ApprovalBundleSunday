@@ -79,3 +79,42 @@ Additionally, for that user **all timeentries with "Customer for free days"** ar
 
 Remark: If time entry updates should not be performed, remove the "Customer for free days" setting.
 
+## Approval Statistics Report
+
+The Approval Statistics Report provides an overview of approval status counts for all users. This report helps administrators and team leads to quickly assess the approval workflow status across their organization.
+
+### Features
+
+- **User Overview**: Shows each user with their approval status counts
+- **Status Categories**: Displays counts for:
+  - **Unsubmitted**: Weeks that haven't been submitted for approval
+  - **Submitted**: Weeks that have been submitted but not yet reviewed
+  - **Pending**: Weeks awaiting review
+  - **Approved**: Weeks that have been approved
+  - **Denied**: Weeks that have been denied
+  - **Total**: Total number of weeks for each user
+
+### How to Access
+
+1. Navigate to the main menu
+2. Click on "Approval Statistics" 
+3. Select a date to generate the report for
+4. Click "Generate Report"
+
+### Report Details
+
+The report displays a table with:
+- User information (username and display name if different)
+- Color-coded badges for each status count
+- Totals row showing organization-wide statistics
+- Date range information
+
+### Use Cases
+
+- **Administrators**: Monitor overall approval workflow health
+- **Team Leads**: Track team member submission and approval status
+- **Compliance**: Ensure timely submission and approval of timesheets
+- **Reporting**: Generate statistics for management reporting
+
+The report respects user permissions, so users will only see statistics for users they have access to approve.
+

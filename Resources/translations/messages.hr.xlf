@@ -18,6 +18,10 @@
         <source>menu.report_user_week</source>
         <target>Izvještaj o odobrenim tjednima</target>
       </trans-unit>
+      <trans-unit id="menu_approval_statistics" resname="menu.approval_statistics">
+        <source>menu.approval_statistics</source>
+        <target>Statistike</target>
+      </trans-unit>
       <trans-unit id="opwlnqi" resname="menu.report_overtime">
         <source>menu.report_overtime</source>
         <target>Tijekom vremena</target>
@@ -438,6 +442,87 @@
           uzeti u obzir te pozitivne ili negativne vrijednosti.
         </target>
       </trans-unit>
+      <trans-unit id="approval_statistics" resname="Approval Statistics">
+        <source>Approval Statistics</source>
+        <target>Statistike odobravanja</target>
+      </trans-unit>
+      <trans-unit id="approval_statistics_report" resname="approval.statistics.report">
+        <source>approval.statistics.report</source>
+        <target>Izvještaj o statistici odobravanja</target>
+      </trans-unit>
+      <trans-unit id="generate_report" resname="Generate Report">
+        <source>Generate Report</source>
+        <target>Generiraj izvještaj</target>
+      </trans-unit>
+      <trans-unit id="unsubmitted" resname="Unsubmitted">
+        <source>Unsubmitted</source>
+        <target>Nepodneseno</target>
+      </trans-unit>
+      <trans-unit id="submitted" resname="Submitted">
+        <source>Submitted</source>
+        <target>Podneseno</target>
+      </trans-unit>
+      <trans-unit id="pending" resname="Pending">
+        <source>Pending</source>
+        <target>Na čekanju</target>
+      </trans-unit>
+      <trans-unit id="approved" resname="Approved">
+        <source>Approved</source>
+        <target>Odobreno</target>
+      </trans-unit>
+      <trans-unit id="denied" resname="Denied">
+        <source>Denied</source>
+        <target>Odbijeno</target>
+      </trans-unit>
+      <trans-unit id="total" resname="Total">
+        <source>Total</source>
+        <target>Ukupno</target>
+      </trans-unit>
+      <trans-unit id="totals" resname="Totals">
+        <source>Totals</source>
+        <target>Zbrojevi</target>
+      </trans-unit>
+      <trans-unit id="user" resname="User">
+        <source>User</source>
+        <target>Korisnik</target>
+      </trans-unit>
+      <trans-unit id="report_generated_for_date" resname="Report generated for date">
+        <source>Report generated for date</source>
+        <target>Izvještaj generiran za datum</target>
+      </trans-unit>
+      <trans-unit id="no_approval_data_found" resname="No approval data found for the selected date range.">
+        <source>No approval data found for the selected date range.</source>
+        <target>Nisu pronađeni podaci o odobravanju za odabrani raspon datuma.</target>
+      </trans-unit>
+      <trans-unit id="approval_statistics_help" resname="approval.statistics.help">
+        <source>approval.statistics.help</source>
+        <target>Ovaj izvještaj prikazuje statistike statusa odobravanja za sve korisnike.</target>
+      </trans-unit>
+      <trans-unit id="approval_statistics_no_data" resname="approval.statistics.no_data">
+        <source>approval.statistics.no_data</source>
+        <target>Nema dostupnih podataka o odobravanju.</target>
+      </trans-unit>
+      <trans-unit id="approval_status_not_submitted" resname="approval.status.not_submitted">
+        <source>approval.status.not_submitted</source>
+        <target>Nije podneseno</target>
+      </trans-unit>
+      <trans-unit id="approval_status_submitted" resname="approval.status.submitted">
+        <source>approval.status.submitted</source>
+        <target>Podneseno</target>
+      </trans-unit>
+      <trans-unit id="approval_status_pending" resname="approval.status.pending">
+        <source>approval.status.pending</source>
+        <target>Na čekanju</target>
+      </trans-unit>
+      <trans-unit id="approval_status_approved" resname="approval.status.approved">
+        <source>approval.status.approved</source>
+        <target>Odobreno</target>
+      </trans-unit>
+      <trans-unit id="approval_status_denied" resname="approval.status.denied">
+        <source>approval.status.denied</source>
+        <target>Odbijeno</target>
+      </trans-unit>
+
     </body>
   </file>
 </xliff>

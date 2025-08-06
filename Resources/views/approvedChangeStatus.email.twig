@@ -1,4 +1,11 @@
 {% block report %}
+    <!-- Header with Malatest logo -->
+    <div style="background-color: #151f2c; padding: 20px; text-align: center; margin-bottom: 20px;">
+        <img src="https://www.malatest.com/wp-content/uploads/2020/05/whitemalatestlogo-01.svg" 
+             alt="Malatest Logo" 
+             style="max-width: 200px; height: auto;">
+    </div>
+
     {% if reason is not null %}
         <p>{{ 'email.hello' | trans }} {{ submitter }},</p>
         {% if reason != '' %}

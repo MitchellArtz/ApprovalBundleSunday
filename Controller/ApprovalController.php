@@ -200,7 +200,7 @@ class ApprovalController extends BaseApprovalController
 
         return null;
     }
-
+    # Essentially sends the awaiting approval email if the week is closed
     private function emailIfClosedMonth($date): void
     {
         // only check when it is not the current month

@@ -18,6 +18,10 @@
         <source>menu.report_user_week</source>
         <target>Wochenberichte</target>
       </trans-unit>
+      <trans-unit id="menu_approval_statistics" resname="menu.approval_statistics">
+        <source>menu.approval_statistics</source>
+        <target>Statistiken</target>
+      </trans-unit>
       <trans-unit id="D8YT2co" resname="menu.settings_workday_history">
         <source>menu.settings_workday_history</source>
         <target>Einstellungen Arbeitstage</target>
@@ -450,6 +454,87 @@
           Jahr werden entsprechend dieser positiven / negativen Werte berechnet.
         </target>
       </trans-unit>
+      <trans-unit id="approval_statistics" resname="Approval Statistics">
+        <source>Approval Statistics</source>
+        <target>Genehmigungsstatistiken</target>
+      </trans-unit>
+      <trans-unit id="approval_statistics_report" resname="approval.statistics.report">
+        <source>approval.statistics.report</source>
+        <target>Genehmigungsstatistik-Bericht</target>
+      </trans-unit>
+      <trans-unit id="generate_report" resname="Generate Report">
+        <source>Generate Report</source>
+        <target>Bericht generieren</target>
+      </trans-unit>
+      <trans-unit id="unsubmitted" resname="Unsubmitted">
+        <source>Unsubmitted</source>
+        <target>Nicht eingereicht</target>
+      </trans-unit>
+      <trans-unit id="submitted" resname="Submitted">
+        <source>Submitted</source>
+        <target>Eingereicht</target>
+      </trans-unit>
+      <trans-unit id="pending" resname="Pending">
+        <source>Pending</source>
+        <target>Ausstehend</target>
+      </trans-unit>
+      <trans-unit id="approved" resname="Approved">
+        <source>Approved</source>
+        <target>Genehmigt</target>
+      </trans-unit>
+      <trans-unit id="denied" resname="Denied">
+        <source>Denied</source>
+        <target>Abgelehnt</target>
+      </trans-unit>
+      <trans-unit id="total" resname="Total">
+        <source>Total</source>
+        <target>Gesamt</target>
+      </trans-unit>
+      <trans-unit id="totals" resname="Totals">
+        <source>Totals</source>
+        <target>Summen</target>
+      </trans-unit>
+      <trans-unit id="user" resname="User">
+        <source>User</source>
+        <target>Benutzer</target>
+      </trans-unit>
+      <trans-unit id="report_generated_for_date" resname="Report generated for date">
+        <source>Report generated for date</source>
+        <target>Bericht generiert für Datum</target>
+      </trans-unit>
+      <trans-unit id="no_approval_data_found" resname="No approval data found for the selected date range.">
+        <source>No approval data found for the selected date range.</source>
+        <target>Keine Genehmigungsdaten für den ausgewählten Datumsbereich gefunden.</target>
+      </trans-unit>
+      <trans-unit id="approval_statistics_help" resname="approval.statistics.help">
+        <source>approval.statistics.help</source>
+        <target>Dieser Bericht zeigt die Genehmigungsstatus-Statistiken für alle Benutzer.</target>
+      </trans-unit>
+      <trans-unit id="approval_statistics_no_data" resname="approval.statistics.no_data">
+        <source>approval.statistics.no_data</source>
+        <target>Keine Genehmigungsdaten verfügbar.</target>
+      </trans-unit>
+      <trans-unit id="approval_status_not_submitted" resname="approval.status.not_submitted">
+        <source>approval.status.not_submitted</source>
+        <target>Nicht eingereicht</target>
+      </trans-unit>
+      <trans-unit id="approval_status_submitted" resname="approval.status.submitted">
+        <source>approval.status.submitted</source>
+        <target>Eingereicht</target>
+      </trans-unit>
+      <trans-unit id="approval_status_pending" resname="approval.status.pending">
+        <source>approval.status.pending</source>
+        <target>Ausstehend</target>
+      </trans-unit>
+      <trans-unit id="approval_status_approved" resname="approval.status.approved">
+        <source>approval.status.approved</source>
+        <target>Genehmigt</target>
+      </trans-unit>
+      <trans-unit id="approval_status_denied" resname="approval.status.denied">
+        <source>approval.status.denied</source>
+        <target>Abgelehnt</target>
+      </trans-unit>
+
     </body>
   </file>
 </xliff>
