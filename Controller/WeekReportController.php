@@ -132,6 +132,19 @@ class WeekReportController extends BaseApprovalController
         // Get daily expected durations for subtotal calculation
         $dailyExpectedDurations = $this->approvalRepository->getDailyExpectedDurations($selectedUser, $start, $end);
 
+        // Get project and activity totals for summary tables
+        $projectTotals = $this->reportRepository->getProjectTotals($selectedUser, $start, $end);
+        $activityTotals = $this->reportRepository->getActivityTotals($selectedUser, $start, $end);
+
+        // Calculate totals
+        $projectTotalDuration = array_sum(array_column($projectTotals, 'duration'));
+        $activityTotalDuration = 0;
+        
+        // Calculate activity totals from hierarchical structure
+        foreach ($activityTotals as $customer) {
+            $activityTotalDuration += $customer['total'];
+        }
+
         [$timesheets, $errors] = $this->getTimesheets($selectedUser, $start, $end);
 
         $selectedUserSundayIssue = !$selectedUser->isFirstDayOfWeekSunday();
@@ -171,7 +184,11 @@ class WeekReportController extends BaseApprovalController
             'approvePreviousWeeksMessage' => $this->approvalRepository->getNextApproveWeek($selectedUser),
             'selectedUserSundayIssue' => $selectedUserSundayIssue,
             'currentUserSundayIssue' => $currentUserSundayIssue,
-            'dailyExpectedDurations' => $dailyExpectedDurations
+            'dailyExpectedDurations' => $dailyExpectedDurations,
+            'projectTotals' => $projectTotals,
+            'activityTotals' => $activityTotals,
+            'projectTotalDuration' => $projectTotalDuration,
+            'activityTotalDuration' => $activityTotalDuration
         ] + $this->getDefaultTemplateParams($this->settingsTool));
     }
 

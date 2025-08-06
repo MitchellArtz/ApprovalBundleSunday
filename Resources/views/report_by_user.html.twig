@@ -113,107 +113,195 @@
 
     {% set totals = {'totals': 0} %}
     {% set columns = 2 %}
-    <div style="overflow-x: auto; width: 100%;">
-        <table class="table table-hover dataTable">
-            <thead>
-            <tr>
-                <th>&nbsp;</th>
-                <th>&nbsp;</th>
-                {% for day in days.dateTimes %}
-                    <th class="text-center text-wrap{% if day is weekend %} weekend{% endif %}{% if day is today %} today{% endif %}">
-                        {{ day|date_weekday }}
-                    </th>
-                    {% set columns = columns + 1 %}
-                    {% set totals = totals|merge({(day|report_date): 0}) %}
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-
-            {% for title, project in rows %}
-                {% set totals = totals|merge({'totals': (totals['totals'] + project.duration)}) %}
-                <tr class="activity">
-                    <td class="text-nowrap">
-                        <strong> {{ title }}  </strong>
-                    </td>
-                    <td class="text-nowrap text-center total">{{ project.duration|duration }}</td>
-                    {% for day in project.days.days %}
-                        <td class="text-nowrap text-center day-total{% if day.date is weekend %} weekend{% endif %}{% if day.date is today %} today{% endif %}">
-                            {% if day.duration > 0 %}
-                                {% set totals = totals|merge({(day.date|report_date): (totals[day.date|report_date] + day.duration)}) %}
-                                <strong>{{ day.duration|duration }}</strong>
-                            {% endif %}
-                        </td>
+    <div class="mt-4">
+        <h4 class="border-bottom pb-2 mb-3">{{ 'label.weekly_report'|trans }}</h4>
+        <div style="overflow-x: auto; width: 100%;">
+            <table class="table table-hover dataTable">
+                <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                    {% for day in days.dateTimes %}
+                        <th class="text-center text-wrap{% if day is weekend %} weekend{% endif %}{% if day is today %} today{% endif %}">
+                            {{ day|date_weekday }}
+                        </th>
+                        {% set columns = columns + 1 %}
+                        {% set totals = totals|merge({(day|report_date): 0}) %}
                     {% endfor %}
                 </tr>
-                {% for key, row in project.details %}
-                    <tr class="description">
-                        <td class="text-nowrap"> {{ key }} </td>
-                        <td class="text-nowrap text-center total">{{ row.duration|duration }}</td>
-                        {% for day in row.days.days %}
+                </thead>
+                <tbody>
+
+                {% for title, project in rows %}
+                    {% set totals = totals|merge({'totals': (totals['totals'] + project.duration)}) %}
+                    <tr class="activity">
+                        <td class="text-nowrap">
+                            <strong> {{ title }}  </strong>
+                        </td>
+                        <td class="text-nowrap text-center total">{{ project.duration|duration }}</td>
+                        {% for day in project.days.days %}
                             <td class="text-nowrap text-center day-total{% if day.date is weekend %} weekend{% endif %}{% if day.date is today %} today{% endif %}">
                                 {% if day.duration > 0 %}
+                                    {% set totals = totals|merge({(day.date|report_date): (totals[day.date|report_date] + day.duration)}) %}
                                     <strong>{{ day.duration|duration }}</strong>
                                 {% endif %}
                             </td>
                         {% endfor %}
                     </tr>
+                    {% for key, row in project.details %}
+                        <tr class="description">
+                            <td class="text-nowrap"> {{ key }} </td>
+                            <td class="text-nowrap text-center total">{{ row.duration|duration }}</td>
+                            {% for day in row.days.days %}
+                                <td class="text-nowrap text-center day-total{% if day.date is weekend %} weekend{% endif %}{% if day.date is today %} today{% endif %}">
+                                    {% if day.duration > 0 %}
+                                        <strong>{{ day.duration|duration }}</strong>
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
-            </tbody>
-            <tfoot>
-            <tr class="summary">
-                <td>{{ 'stats.duration_total'|trans }} {% if expectedDuration is not empty %}[{{ 'stats.duration_expected'|trans }}] {% endif %}</td>
-                <td class="text-nowrap text-center total">{{ totals['totals']|duration }}{% if expectedDuration is not empty %} [{{ expectedDuration|duration }}]{% endif %}</td>
-                {% for day in days.dateTimes %}
-                    <td class="text-nowrap text-center day-total{% if day is weekend %} weekend{% endif %}">
-                        {{ totals[day|report_date]|duration }}
-
-                        {% if errors[(day | date_format('Y-m-d'))] is defined and (errors[(day | date_format('Y-m-d'))] | length) > 0 %}
-                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
-                                  title="{{ errors[(day | date_format('Y-m-d'))] | join('\n\n') }}">
-                                    <i class="fa fa-1x fa-exclamation-circle" style="color: red"></i>
-                            </span>
-                        {% endif %}
-                    </td>
-                {% endfor %}
-            </tr>
-            {% if yearDuration is not null %}
-                {% set yearDiff = yearDuration.actualDuration - yearDuration.expectedDuration + yearDuration.manualAdoption %}
+                </tbody>
+                <tfoot>
                 <tr class="summary">
-                <td>{{ 'label.yearly_overtime'|trans }}</td>
-                <td class="text-nowrap text-center total {% if yearDiff < 0 %} text-danger{% endif %}">{{ yearDiff|duration }}</td>
-                {% for day in days.dateTimes %}
-                    <td></td>
-                {% endfor %}
-            </tr>
-            {% endif %}
-            {% if dailyExpectedDurations is defined %}
-                <tr class="summary">
-                    <td>{{ 'label.daily_difference'|trans }}</td>
-                    <td class="text-nowrap text-center total">
-                        {% set totalDiff = totals['totals'] - expectedDuration %}
-                        <span class="{% if totalDiff > 0 %}text-danger{% elseif totalDiff < 0 %}text-danger{% else %}text-success{% endif %}">
-                            {% if totalDiff > 0 %}+{% endif %}{{ totalDiff|duration }}
-                        </span>
-                    </td>
+                    <td>{{ 'stats.duration_total'|trans }} {% if expectedDuration is not empty %}[{{ 'stats.duration_expected'|trans }}] {% endif %}</td>
+                    <td class="text-nowrap text-center total">{{ totals['totals']|duration }}{% if expectedDuration is not empty %} [{{ expectedDuration|duration }}]{% endif %}</td>
                     {% for day in days.dateTimes %}
-                        {% set dayKey = day|date_format('Y-m-d') %}
-                        {% set dayActual = totals[day|report_date] %}
-                        {% set dayExpected = dailyExpectedDurations[dayKey]|default(0) %}
-                        {% set dayDiff = dayActual - dayExpected %}
                         <td class="text-nowrap text-center day-total{% if day is weekend %} weekend{% endif %}">
-                            <span class="{% if dayDiff > 0 %}text-danger{% elseif dayDiff < 0 %}text-danger{% else %}text-success{% endif %}">
-                                {% if dayDiff > 0 %}+{% endif %}{{ dayDiff|duration }}
-                            </span>
+                            {{ totals[day|report_date]|duration }}
+
+                            {% if errors[(day | date_format('Y-m-d'))] is defined and (errors[(day | date_format('Y-m-d'))] | length) > 0 %}
+                                <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                                      title="{{ errors[(day | date_format('Y-m-d'))] | join('\n\n') }}">
+                                        <i class="fa fa-1x fa-exclamation-circle" style="color: red"></i>
+                                </span>
+                            {% endif %}
                         </td>
                     {% endfor %}
                 </tr>
-            {% endif %}
-            </tfoot>
+                {% if yearDuration is not null %}
+                    {% set yearDiff = yearDuration.actualDuration - yearDuration.expectedDuration + yearDuration.manualAdoption %}
+                    <tr class="summary">
+                    <td>{{ 'label.yearly_overtime'|trans }}</td>
+                    <td class="text-nowrap text-center total {% if yearDiff < 0 %} text-danger{% endif %}">{{ yearDiff|duration }}</td>
+                    {% for day in days.dateTimes %}
+                        <td></td>
+                    {% endfor %}
+                </tr>
+                {% endif %}
+                {% if dailyExpectedDurations is defined %}
+                    <tr class="summary">
+                        <td>{{ 'label.daily_difference'|trans }}</td>
+                        <td class="text-nowrap text-center total">
+                            {% set totalDiff = totals['totals'] - expectedDuration %}
+                            <span class="{% if totalDiff > 0 %}text-danger{% elseif totalDiff < 0 %}text-danger{% else %}text-success{% endif %}">
+                                {% if totalDiff > 0 %}+{% endif %}{{ totalDiff|duration }}
+                            </span>
+                        </td>
+                        {% for day in days.dateTimes %}
+                            {% set dayKey = day|date_format('Y-m-d') %}
+                            {% set dayActual = totals[day|report_date] %}
+                            {% set dayExpected = dailyExpectedDurations[dayKey]|default(0) %}
+                            {% set dayDiff = dayActual - dayExpected %}
+                            <td class="text-nowrap text-center day-total{% if day is weekend %} weekend{% endif %}">
+                                <span class="{% if dayDiff > 0 %}text-danger{% elseif dayDiff < 0 %}text-danger{% else %}text-success{% endif %}">
+                                    {% if dayDiff > 0 %}+{% endif %}{{ dayDiff|duration }}
+                                </span>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+                </tfoot>
 
-        </table>
+            </table>
+        </div>
     </div>
+
+    {% if projectTotals is defined and projectTotals|length > 0 %}
+        <hr class="my-4">
+        <div class="mt-4">
+            <h4 class="border-bottom pb-2 mb-3">{{ 'label.project_totals'|trans }}</h4>
+            <div style="overflow-x: auto; width: 100%;">
+                <table class="table table-hover dataTable">
+                    <thead>
+                    <tr>
+                        <th>{{ 'header.customer'|trans }}</th>
+                        <th>{{ 'header.project'|trans }}</th>
+                        <th class="text-center">{{ 'header.duration'|trans }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for project in projectTotals %}
+                        <tr>
+                            <td>{{ project.customer }}</td>
+                            <td>{{ project.project }}</td>
+                            <td class="text-center">{{ project.duration|duration }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr class="summary">
+                        <td colspan="2"><strong>{{ 'stats.duration_total'|trans }}</strong></td>
+                        <td class="text-center"><strong>{{ projectTotalDuration|duration }}</strong></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if activityTotals is defined and activityTotals|length > 0 %}
+        <hr class="my-4">
+        <div class="mt-4">
+            <h4 class="border-bottom pb-2 mb-3">{{ 'label.activity_totals'|trans }}</h4>
+            <div class="accordion" id="activityAccordion">
+                {% for customerName, customer in activityTotals %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="customer-{{ loop.index }}">
+                            <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop.index }}" aria-expanded="{% if loop.first %}true{% else %}false{% endif %}" aria-controls="collapse-{{ loop.index }}">
+                                <strong>{{ customer.name }}</strong>
+                                <span class="ms-auto me-3">{{ customer.total|duration }}</span>
+                            </button>
+                        </h2>
+                        <div id="collapse-{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" aria-labelledby="customer-{{ loop.index }}" data-bs-parent="#activityAccordion">
+                            <div class="accordion-body p-0">
+                                <div class="accordion" id="projectAccordion-{{ loop.index }}">
+                                    {% for projectName, project in customer.projects %}
+                                        <div class="accordion-item border-0">
+                                            <h3 class="accordion-header" id="project-{{ loop.parent.loop.index }}-{{ loop.index }}">
+                                                <button class="accordion-button accordion-button-sm {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#project-collapse-{{ loop.parent.loop.index }}-{{ loop.index }}" aria-expanded="{% if loop.first %}true{% else %}false{% endif %}" aria-controls="project-collapse-{{ loop.parent.loop.index }}-{{ loop.index }}">
+                                                    <span class="ms-3">{{ project.name }}</span>
+                                                    <span class="ms-auto me-3">{{ project.total|duration }}</span>
+                                                </button>
+                                            </h3>
+                                            <div id="project-collapse-{{ loop.parent.loop.index }}-{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" aria-labelledby="project-{{ loop.parent.loop.index }}-{{ loop.index }}" data-bs-parent="#projectAccordion-{{ loop.parent.loop.index }}">
+                                                <div class="accordion-body p-0">
+                                                    <table class="table table-sm mb-0">
+                                                        <tbody>
+                                                            {% for activity in project.activities %}
+                                                                <tr>
+                                                                    <td class="ps-5">{{ activity.name }}</td>
+                                                                    <td class="text-end pe-3">{{ activity.duration|duration }}</td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="mt-3 text-end">
+                <strong>{{ 'stats.duration_total'|trans }}: {{ activityTotalDuration|duration }}</strong>
+            </div>
+        </div>
+    {% endif %}
 
     {% if timesheet | length > 0 %}
         <div id="timesheet_approval" style="overflow-x: auto; width: 100%; margin-top: 2rem; display: none">
@@ -260,6 +348,36 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <style>
+        .accordion-button-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .accordion-button-sm:not(.collapsed) {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+        
+        .accordion-item .accordion-item {
+            border-left: 2px solid #dee2e6;
+            margin-left: 1rem;
+        }
+        
+        .accordion-item .accordion-item .accordion-item {
+            border-left: 2px solid #adb5bd;
+            margin-left: 0.5rem;
+        }
+        
+        .table-sm td {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .accordion-body .accordion-body {
+            padding: 0;
+        }
+    </style>
     <script type="text/javascript">
     document.addEventListener("kimai.initialized", function () {
         const userForm = document.getElementById('user_approval_form');

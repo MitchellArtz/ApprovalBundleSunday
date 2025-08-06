@@ -451,6 +451,18 @@
         <source>label.daily_difference</source>
         <target>Tägliche Differenz</target>
       </trans-unit>
+      <trans-unit id="weekly_report_label" resname="label.weekly_report">
+        <source>label.weekly_report</source>
+        <target>Wochenbericht</target>
+      </trans-unit>
+      <trans-unit id="project_totals_label" resname="label.project_totals">
+        <source>label.project_totals</source>
+        <target>Projekt-Summen</target>
+      </trans-unit>
+      <trans-unit id="activity_totals_label" resname="label.activity_totals">
+        <source>label.activity_totals</source>
+        <target>Aktivitäts-Summen</target>
+      </trans-unit>
       <trans-unit id="sLVHir2" resname="description.overtime_history">
         <source>description.overtime_history</source>
         <target>
@@ -480,7 +492,7 @@
       </trans-unit>
       <trans-unit id="pending" resname="Pending">
         <source>Pending</source>
-        <target>Ausstehend</target>
+        <target>Sonstige</target>
       </trans-unit>
       <trans-unit id="approved" resname="Approved">
         <source>Approved</source>
@@ -528,7 +540,7 @@
       </trans-unit>
       <trans-unit id="approval_status_pending" resname="approval.status.pending">
         <source>approval.status.pending</source>
-        <target>Ausstehend</target>
+        <target>Sonstige</target>
       </trans-unit>
       <trans-unit id="approval_status_approved" resname="approval.status.approved">
         <source>approval.status.approved</source>

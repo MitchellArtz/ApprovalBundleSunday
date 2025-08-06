@@ -126,6 +126,118 @@ class ReportRepository extends ServiceEntityRepository
         return (int) $result['duration'];
     }
 
+    public function getProjectTotals(User $user, \DateTime $begin, \DateTime $end): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->addSelect('COALESCE(SUM(t.duration), 0) as duration')
+            ->addSelect('IDENTITY(t.project) as project')
+            ->addSelect('p.name as projectName')
+            ->addSelect('c.name as customerName')
+            ->from(Timesheet::class, 't')
+            ->join('t.project', 'p')
+            ->join('p.customer', 'c')
+            ->where($qb->expr()->isNotNull('t.end'))
+            ->andWhere($qb->expr()->between('t.begin', ':begin', ':end'))
+            ->andWhere($qb->expr()->in('t.user', ':user'))
+            ->setParameter('begin', $begin)
+            ->setParameter('end', $end)
+            ->setParameter('user', $user)
+            ->groupBy('project')
+            ->addGroupBy('projectName')
+            ->addGroupBy('customerName')
+            ->orderBy('customerName')
+            ->addOrderBy('projectName');
+
+        $result = $qb->getQuery()->getResult();
+
+        $projectTotals = [];
+        foreach ($result as $row) {
+            if ($row['duration'] > 0) {
+                $projectTotals[] = [
+                    'customer' => $row['customerName'],
+                    'project' => $row['projectName'],
+                    'duration' => $row['duration']
+                ];
+            }
+        }
+
+        return $projectTotals;
+    }
+
+    public function getActivityTotals(User $user, \DateTime $begin, \DateTime $end): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->addSelect('COALESCE(SUM(t.duration), 0) as duration')
+            ->addSelect('IDENTITY(t.activity) as activity')
+            ->addSelect('a.name as activityName')
+            ->addSelect('p.name as projectName')
+            ->addSelect('c.name as customerName')
+            ->from(Timesheet::class, 't')
+            ->join('t.activity', 'a')
+            ->join('t.project', 'p')
+            ->join('p.customer', 'c')
+            ->where($qb->expr()->isNotNull('t.end'))
+            ->andWhere($qb->expr()->between('t.begin', ':begin', ':end'))
+            ->andWhere($qb->expr()->in('t.user', ':user'))
+            ->setParameter('begin', $begin)
+            ->setParameter('end', $end)
+            ->setParameter('user', $user)
+            ->groupBy('activity')
+            ->addGroupBy('activityName')
+            ->addGroupBy('projectName')
+            ->addGroupBy('customerName')
+            ->orderBy('customerName')
+            ->addOrderBy('projectName')
+            ->addOrderBy('activityName');
+
+        $result = $qb->getQuery()->getResult();
+
+        $activityTotals = [];
+        $customerTotals = [];
+        
+        foreach ($result as $row) {
+            if ($row['duration'] > 0) {
+                $customerName = $row['customerName'];
+                $projectName = $row['projectName'];
+                $activityName = $row['activityName'];
+                
+                // Initialize customer if not exists
+                if (!isset($activityTotals[$customerName])) {
+                    $activityTotals[$customerName] = [
+                        'name' => $customerName,
+                        'total' => 0,
+                        'projects' => []
+                    ];
+                    $customerTotals[$customerName] = 0;
+                }
+                
+                // Initialize project if not exists
+                if (!isset($activityTotals[$customerName]['projects'][$projectName])) {
+                    $activityTotals[$customerName]['projects'][$projectName] = [
+                        'name' => $projectName,
+                        'total' => 0,
+                        'activities' => []
+                    ];
+                }
+                
+                // Add activity
+                $activityTotals[$customerName]['projects'][$projectName]['activities'][] = [
+                    'name' => $activityName,
+                    'duration' => $row['duration']
+                ];
+                
+                // Update totals
+                $activityTotals[$customerName]['projects'][$projectName]['total'] += $row['duration'];
+                $activityTotals[$customerName]['total'] += $row['duration'];
+                $customerTotals[$customerName] += $row['duration'];
+            }
+        }
+
+        return $activityTotals;
+    }
+
     private function generateDailyStatistics(\DateTime $begin, \DateTime $end, User $user, $value, array $array): array
     {
         $days = new DailyStatistic($begin, $end, $user);
