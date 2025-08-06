@@ -129,6 +129,9 @@ class WeekReportController extends BaseApprovalController
             $expectedDuration = $this->approvalRepository->calculateExpectedDurationByUserAndDate($selectedUser, $start, $end);
         }
 
+        // Get daily expected durations for subtotal calculation
+        $dailyExpectedDurations = $this->approvalRepository->getDailyExpectedDurations($selectedUser, $start, $end);
+
         [$timesheets, $errors] = $this->getTimesheets($selectedUser, $start, $end);
 
         $selectedUserSundayIssue = !$selectedUser->isFirstDayOfWeekSunday();
@@ -167,7 +170,8 @@ class WeekReportController extends BaseApprovalController
             'timesheet' => $timesheets,
             'approvePreviousWeeksMessage' => $this->approvalRepository->getNextApproveWeek($selectedUser),
             'selectedUserSundayIssue' => $selectedUserSundayIssue,
-            'currentUserSundayIssue' => $currentUserSundayIssue
+            'currentUserSundayIssue' => $currentUserSundayIssue,
+            'dailyExpectedDurations' => $dailyExpectedDurations
         ] + $this->getDefaultTemplateParams($this->settingsTool));
     }
 

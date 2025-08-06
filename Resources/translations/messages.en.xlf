@@ -528,6 +528,10 @@
         <source>label.overtime</source>
         <target>Overtime</target>
       </trans-unit>
+      <trans-unit id="daily_diff_label" resname="label.daily_difference">
+        <source>label.daily_difference</source>
+        <target>Daily Difference</target>
+      </trans-unit>
       <trans-unit id="sLVHir2" resname="description.overtime_history">
         <source>description.overtime_history</source>
         <target>

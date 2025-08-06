@@ -188,6 +188,28 @@
                 {% endfor %}
             </tr>
             {% endif %}
+            {% if dailyExpectedDurations is defined %}
+                <tr class="summary">
+                    <td>{{ 'label.daily_difference'|trans }}</td>
+                    <td class="text-nowrap text-center total">
+                        {% set totalDiff = totals['totals'] - expectedDuration %}
+                        <span class="{% if totalDiff > 0 %}text-danger{% elseif totalDiff < 0 %}text-danger{% else %}text-success{% endif %}">
+                            {% if totalDiff > 0 %}+{% endif %}{{ totalDiff|duration }}
+                        </span>
+                    </td>
+                    {% for day in days.dateTimes %}
+                        {% set dayKey = day|date_format('Y-m-d') %}
+                        {% set dayActual = totals[day|report_date] %}
+                        {% set dayExpected = dailyExpectedDurations[dayKey]|default(0) %}
+                        {% set dayDiff = dayActual - dayExpected %}
+                        <td class="text-nowrap text-center day-total{% if day is weekend %} weekend{% endif %}">
+                            <span class="{% if dayDiff > 0 %}text-danger{% elseif dayDiff < 0 %}text-danger{% else %}text-success{% endif %}">
+                                {% if dayDiff > 0 %}+{% endif %}{{ dayDiff|duration }}
+                            </span>
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endif %}
             </tfoot>
 
         </table>

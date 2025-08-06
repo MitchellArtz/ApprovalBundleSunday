@@ -178,6 +178,17 @@ class ApprovalRepository extends ServiceEntityRepository
         return $expected;
     }
 
+    public function getDailyExpectedDurations($user, $startDate, $endDate): array
+    {
+        $dailyExpected = [];
+        for ($i = clone $startDate; $i <= $endDate; $i->modify('+1 day')) {
+            $dateKey = $i->format('Y-m-d');
+            $dailyExpected[$dateKey] = $this->getExpectTimeForDate($i, $user, 0);
+        }
+
+        return $dailyExpected;
+    }
+
     public function getExpectTimeForDate(DateTime $i, User $user, $expected)
     {
         $workdayHistory = $this->approvalWorkdayHistoryRepository->findByUserAndDateWorkdayHistory($user, $i);
