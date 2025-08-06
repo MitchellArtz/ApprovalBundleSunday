@@ -544,6 +544,30 @@
         <source>label.activity_totals</source>
         <target>Activity Totals</target>
       </trans-unit>
+      <trans-unit id="project_distribution_label" resname="label.project_distribution">
+        <source>label.project_distribution</source>
+        <target>Project Distribution</target>
+      </trans-unit>
+      <trans-unit id="project_details_label" resname="label.project_details">
+        <source>label.project_details</source>
+        <target>Project Details</target>
+      </trans-unit>
+      <trans-unit id="activity_distribution_label" resname="label.activity_distribution">
+        <source>label.activity_distribution</source>
+        <target>Activity Distribution</target>
+      </trans-unit>
+      <trans-unit id="activity_details_label" resname="label.activity_details">
+        <source>label.activity_details</source>
+        <target>Activity Details</target>
+      </trans-unit>
+      <trans-unit id="header_percentage" resname="header.percentage">
+        <source>header.percentage</source>
+        <target>Percentage</target>
+      </trans-unit>
+      <trans-unit id="project_and_activity_overview" resname="label.project_and_activity_overview">
+        <source>label.project_and_activity_overview</source>
+        <target>Project and Activity Overview</target>
+      </trans-unit>
       <trans-unit id="sLVHir2" resname="description.overtime_history">
         <source>description.overtime_history</source>
         <target>
