@@ -219,8 +219,8 @@
     </div>
 
     {% if activityTotals is defined and activityTotals|length > 0 %}
-        <hr class="my-4">
-        <div class="mt-4">
+        <hr class="my-5">
+        <div class="mt-5">
             <h4 class="border-bottom pb-2 mb-3">{{ 'label.project_and_activity_overview'|trans }}</h4>
             
             <!-- Detailed Activity Accordion -->
@@ -228,29 +228,29 @@
                 {% for customerName, customer in activityTotals %}
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="customer-{{ loop.index }}">
-                            <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop.index }}" aria-expanded="{% if loop.first %}true{% else %}false{% endif %}" aria-controls="collapse-{{ loop.index }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop.index }}" aria-expanded="false" aria-controls="collapse-{{ loop.index }}">
                                 <strong>{{ customer.name }}</strong>
                                 <span class="ms-auto me-3">{{ customer.total|duration }}</span>
                             </button>
                         </h2>
-                        <div id="collapse-{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" aria-labelledby="customer-{{ loop.index }}" data-bs-parent="#activityAccordion">
+                        <div id="collapse-{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="customer-{{ loop.index }}">
                             <div class="accordion-body p-0">
                                 <div class="accordion" id="projectAccordion-{{ loop.index }}">
                                     {% for projectName, project in customer.projects %}
                                         <div class="accordion-item border-0">
                                             <h3 class="accordion-header" id="project-{{ loop.parent.loop.index }}-{{ loop.index }}">
-                                                <button class="accordion-button accordion-button-sm {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#project-collapse-{{ loop.parent.loop.index }}-{{ loop.index }}" aria-expanded="{% if loop.first %}true{% else %}false{% endif %}" aria-controls="project-collapse-{{ loop.parent.loop.index }}-{{ loop.index }}">
+                                                <button class="accordion-button accordion-button-sm" type="button" data-bs-toggle="collapse" data-bs-target="#project-collapse-{{ loop.parent.loop.index }}-{{ loop.index }}" aria-expanded="true" aria-controls="project-collapse-{{ loop.parent.loop.index }}-{{ loop.index }}">
                                                     <span class="ms-3">{{ project.name }}</span>
                                                     <span class="ms-auto me-3">{{ project.total|duration }}</span>
                                                 </button>
                                             </h3>
-                                            <div id="project-collapse-{{ loop.parent.loop.index }}-{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" aria-labelledby="project-{{ loop.parent.loop.index }}-{{ loop.index }}" data-bs-parent="#projectAccordion-{{ loop.parent.loop.index }}">
+                                            <div id="project-collapse-{{ loop.parent.loop.index }}-{{ loop.index }}" class="accordion-collapse collapse show" aria-labelledby="project-{{ loop.parent.loop.index }}-{{ loop.index }}">
                                                 <div class="accordion-body p-0">
                                                     <table class="table table-sm mb-0">
                                                         <tbody>
                                                             {% for activity in project.activities %}
                                                                 <tr>
-                                                                    <td class="ps-5">{{ activity.name }}</td>
+                                                                    <td class="ps-6">{{ activity.name }}</td>
                                                                     <td class="text-end pe-3">{{ activity.duration|duration }}</td>
                                                                 </tr>
                                                             {% endfor %}
@@ -280,12 +280,17 @@
             <!-- Project Pie Chart -->
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <div class="card">
+                    <div class="card chart-card">
                         <div class="card-header">
                             <h5 class="card-title mb-0">{{ 'label.project_distribution'|trans }}</h5>
                         </div>
                         <div class="card-body">
-                            <canvas id="projectPieChart" width="400" height="400"></canvas>
+                            <button type="button" class="btn btn-sm btn-outline-secondary chart-expand-btn" data-bs-toggle="modal" data-bs-target="#projectChartModal" title="{{ 'tooltip.expand_chart'|trans }}">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                            <div class="chart-container">
+                                <canvas id="projectPieChart" width="300" height="300"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -339,12 +344,17 @@
             <!-- Activity Pie Chart -->
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <div class="card">
+                    <div class="card chart-card">
                         <div class="card-header">
                             <h5 class="card-title mb-0">{{ 'label.activity_distribution'|trans }}</h5>
                         </div>
                         <div class="card-body">
-                            <canvas id="activityPieChart" width="400" height="400"></canvas>
+                            <button type="button" class="btn btn-sm btn-outline-secondary chart-expand-btn" data-bs-toggle="modal" data-bs-target="#activityChartModal" title="{{ 'tooltip.expand_chart'|trans }}">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                            <div class="chart-container">
+                                <canvas id="activityPieChart" width="300" height="300"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -437,6 +447,36 @@
             </table>
         </div>
     {% endif %}
+    
+    <!-- Project Chart Modal -->
+    <div class="modal fade chart-modal" id="projectChartModal" tabindex="-1" aria-labelledby="projectChartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="projectChartModalLabel">{{ 'label.project_distribution'|trans }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <canvas id="projectPieChartModal" width="800" height="600"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Activity Chart Modal -->
+    <div class="modal fade chart-modal" id="activityChartModal" tabindex="-1" aria-labelledby="activityChartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="activityChartModalLabel">{{ 'label.activity_distribution'|trans }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <canvas id="activityPieChartModal" width="800" height="600"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
@@ -461,7 +501,7 @@
         
         .accordion-item .accordion-item .accordion-item {
             border-left: 2px solid #adb5bd;
-            margin-left: 0.5rem;
+            margin-left: 1.5rem;
         }
         
         .table-sm td {
@@ -475,8 +515,79 @@
         
         .chart-container {
             position: relative;
-            height: 400px;
+            height: 300px;
             width: 100%;
+        }
+        
+        .chart-card {
+            position: relative;
+        }
+        
+        .chart-expand-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        
+        .chart-card:hover .chart-expand-btn {
+            opacity: 1;
+        }
+        
+        .chart-modal .modal-dialog {
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+        
+        .chart-modal .modal-body {
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Dark mode accordion styling */
+        .accordion-button {
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+            border-color: var(--bs-border-color);
+        }
+        
+        .accordion-button:not(.collapsed) {
+            background-color: var(--bs-secondary-bg);
+            color: var(--bs-body-color);
+        }
+        
+        .accordion-button:hover {
+            background-color: var(--bs-secondary-bg);
+            color: var(--bs-body-color);
+        }
+        
+        .accordion-button:focus {
+            background-color: var(--bs-secondary-bg);
+            color: var(--bs-body-color);
+            box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+        }
+        
+        .accordion-button-sm {
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+        }
+        
+        .accordion-button-sm:not(.collapsed) {
+            background-color: var(--bs-secondary-bg);
+            color: var(--bs-body-color);
+        }
+        
+        .accordion-button-sm:hover {
+            background-color: var(--bs-secondary-bg);
+            color: var(--bs-body-color);
+        }
+        
+        .accordion-item {
+            border-color: var(--bs-border-color);
         }
     </style>
     <script type="text/javascript">
@@ -561,7 +672,7 @@
                 }]
             };
             
-            new Chart(projectCtx, {
+            const projectChart = new Chart(projectCtx, {
                 type: 'pie',
                 data: projectData,
                 options: {
@@ -592,6 +703,47 @@
                     }
                 }
             });
+            
+            // Project Chart Modal
+            const projectModal = document.getElementById('projectChartModal');
+            if (projectModal) {
+                projectModal.addEventListener('shown.bs.modal', function () {
+                    const modalCtx = document.getElementById('projectPieChartModal');
+                    if (modalCtx) {
+                        new Chart(modalCtx, {
+                            type: 'pie',
+                            data: projectData,
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: {
+                                            padding: 20,
+                                            usePointStyle: true,
+                                            font: {
+                                                size: 14
+                                            }
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                const label = context.label || '';
+                                                const value = context.parsed;
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const percentage = ((value / total) * 100).toFixed(1);
+                                                return label + ': ' + (value / 3600).toFixed(1) + 'h (' + percentage + '%)';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
         }
         {% endif %}
         
@@ -627,7 +779,7 @@
                 }]
             };
             
-            new Chart(activityCtx, {
+            const activityChart = new Chart(activityCtx, {
                 type: 'pie',
                 data: activityChartData,
                 options: {
@@ -658,6 +810,47 @@
                     }
                 }
             });
+            
+            // Activity Chart Modal
+            const activityModal = document.getElementById('activityChartModal');
+            if (activityModal) {
+                activityModal.addEventListener('shown.bs.modal', function () {
+                    const modalCtx = document.getElementById('activityPieChartModal');
+                    if (modalCtx) {
+                        new Chart(modalCtx, {
+                            type: 'pie',
+                            data: activityChartData,
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: {
+                                            padding: 20,
+                                            usePointStyle: true,
+                                            font: {
+                                                size: 12
+                                            }
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                const label = context.label || '';
+                                                const value = context.parsed;
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const percentage = ((value / total) * 100).toFixed(1);
+                                                return label + ': ' + (value / 3600).toFixed(1) + 'h (' + percentage + '%)';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
         }
         {% endif %}
     });

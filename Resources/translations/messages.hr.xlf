@@ -475,6 +475,10 @@
         <source>label.project_and_activity_overview</source>
         <target>Pregled projekata i aktivnosti</target>
       </trans-unit>
+      <trans-unit id="tooltip_expand_chart" resname="tooltip.expand_chart">
+        <source>tooltip.expand_chart</source>
+        <target>Proširi grafikon na puni zaslon</target>
+      </trans-unit>
       <trans-unit id="sLVHir2" resname="description.overtime_history">
         <source>description.overtime_history</source>
         <target>

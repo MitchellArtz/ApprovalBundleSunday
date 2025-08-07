@@ -487,6 +487,10 @@
         <source>label.project_and_activity_overview</source>
         <target>Projekt- und Aktivitätsübersicht</target>
       </trans-unit>
+      <trans-unit id="tooltip_expand_chart" resname="tooltip.expand_chart">
+        <source>tooltip.expand_chart</source>
+        <target>Diagramm in Vollbildansicht erweitern</target>
+      </trans-unit>
       <trans-unit id="sLVHir2" resname="description.overtime_history">
         <source>description.overtime_history</source>
         <target>

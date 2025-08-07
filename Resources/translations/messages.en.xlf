@@ -568,6 +568,10 @@
         <source>label.project_and_activity_overview</source>
         <target>Project and Activity Overview</target>
       </trans-unit>
+      <trans-unit id="tooltip_expand_chart" resname="tooltip.expand_chart">
+        <source>tooltip.expand_chart</source>
+        <target>Expand chart to full screen</target>
+      </trans-unit>
       <trans-unit id="sLVHir2" resname="description.overtime_history">
         <source>description.overtime_history</source>
         <target>
