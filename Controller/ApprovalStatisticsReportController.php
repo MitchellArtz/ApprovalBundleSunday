@@ -53,10 +53,12 @@ class ApprovalStatisticsReportController extends BaseApprovalController
             ];
         }
 
-        // Sort by user display name
-        usort($statistics, function ($a, $b) {
-            return strcmp($a['user']->getDisplayName(), $b['user']->getDisplayName());
-        });
+        // Get sorting parameters
+        $sortBy = $request->query->get('sort', 'user');
+        $sortOrder = $request->query->get('order', 'asc');
+
+        // Sort statistics based on parameters
+        $this->sortStatistics($statistics, $sortBy, $sortOrder);
 
         $page = new PageSetup('approval.statistics.report');
         $page->setHelp('approval.statistics.help');
@@ -66,6 +68,8 @@ class ApprovalStatisticsReportController extends BaseApprovalController
             'statistics' => $statistics,
             'currentUser' => $this->getUser(),
             'current_tab' => 'approval_statistics',
+            'sortBy' => $sortBy,
+            'sortOrder' => $sortOrder,
         ] + $this->getDefaultTemplateParams($this->settingsTool));
     }
 
@@ -149,5 +153,28 @@ class ApprovalStatisticsReportController extends BaseApprovalController
 
         // If user can only view their own approvals
         return [$this->getUser()];
+    }
+
+    private function sortStatistics(array &$statistics, string $sortBy, string $sortOrder): void
+    {
+        $multiplier = ($sortOrder === 'desc') ? -1 : 1;
+
+        usort($statistics, function ($a, $b) use ($sortBy, $multiplier) {
+            switch ($sortBy) {
+                case 'user':
+                    $valueA = $a['user']->getDisplayName() ?: $a['user']->getUsername();
+                    $valueB = $b['user']->getDisplayName() ?: $b['user']->getUsername();
+                    return $multiplier * strcmp($valueA, $valueB);
+                case 'unsubmitted':
+                case 'submitted':
+                case 'pending':
+                case 'approved':
+                case 'denied':
+                case 'total':
+                    return $multiplier * ($a[$sortBy] <=> $b[$sortBy]);
+                default:
+                    return 0;
+            }
+        });
     }
 } 

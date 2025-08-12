@@ -2,6 +2,131 @@
 
 {% block page_title %}{{ 'Approval Statistics'|trans }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .sortable-header {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .sortable-header:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            text-decoration: none !important;
+        }
+        
+        .sortable-header:hover .text-dark {
+            color: #007bff !important;
+        }
+        
+        .sortable-header .fas {
+            transition: all 0.2s ease;
+        }
+        
+        .sortable-header:hover .fas {
+            color: #007bff !important;
+        }
+        
+        .sortable-header a {
+            display: block;
+            padding: 8px;
+            margin: -8px;
+        }
+        
+        .sortable-header a:hover {
+            text-decoration: none;
+        }
+        
+        .sort-indicator {
+            margin-left: 5px;
+        }
+        
+        .sort-indicator.fa-sort-up,
+        .sort-indicator.fa-sort-down {
+            color: #007bff;
+            animation: sortIndicator 0.3s ease-in-out;
+        }
+        
+        @keyframes sortIndicator {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .table th.sortable-header {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .table th.sortable-header:hover {
+            background-color: #e9ecef;
+        }
+        
+        .table-responsive {
+            border-radius: 0.375rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+        
+        .badge {
+            font-size: 0.875em;
+        }
+        
+        /* Focus styles for accessibility */
+        .sortable-header:focus-within {
+            outline: 2px solid #007bff;
+            outline-offset: 2px;
+        }
+        
+        /* Loading state for better UX */
+        .sortable-header.sorting {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .sortable-header.sorting::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            width: 16px;
+            height: 16px;
+            margin-top: -8px;
+            border: 2px solid #007bff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .sortable-header a {
+                padding: 4px;
+                margin: -4px;
+            }
+            
+            .sort-indicator {
+                margin-left: 3px;
+            }
+            
+            .table-responsive {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block main %}
     <div class="card">
         <div class="card-header">
@@ -18,13 +143,97 @@
                     <table class="table table-hover dataTable">
                         <thead>
                             <tr>
-                                <th>{{ 'User'|trans }}</th>
-                                <th class="text-center">{{ 'Unsubmitted'|trans }}</th>
-                                <th class="text-center">{{ 'Submitted'|trans }}</th>
-                                <th class="text-center">{{ 'Pending'|trans }}</th>
-                                <th class="text-center">{{ 'Approved'|trans }}</th>
-                                <th class="text-center">{{ 'Denied'|trans }}</th>
-                                <th class="text-center">{{ 'Total'|trans }}</th>
+                                <th class="sortable-header" role="columnheader" aria-sort="{{ sortBy == 'user' ? (sortOrder == 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                    <a href="{{ path('approval_statistics_report', {
+                                        'sort': 'user',
+                                        'order': sortBy == 'user' and sortOrder == 'asc' ? 'desc' : 'asc'
+                                    }) }}" class="text-decoration-none text-dark" aria-label="Sort by User {{ sortBy == 'user' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
+                                        {{ 'User'|trans }}
+                                        {% if sortBy == 'user' %}
+                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th class="text-center sortable-header" role="columnheader" aria-sort="{{ sortBy == 'unsubmitted' ? (sortOrder == 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                    <a href="{{ path('approval_statistics_report', {
+                                        'sort': 'unsubmitted',
+                                        'order': sortBy == 'unsubmitted' and sortOrder == 'asc' ? 'desc' : 'asc'
+                                    }) }}" class="text-decoration-none text-dark" aria-label="Sort by Unsubmitted {{ sortBy == 'unsubmitted' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
+                                        {{ 'Unsubmitted'|trans }}
+                                        {% if sortBy == 'unsubmitted' %}
+                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th class="text-center sortable-header" role="columnheader" aria-sort="{{ sortBy == 'submitted' ? (sortOrder == 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                    <a href="{{ path('approval_statistics_report', {
+                                        'sort': 'submitted',
+                                        'order': sortBy == 'submitted' and sortOrder == 'asc' ? 'desc' : 'asc'
+                                    }) }}" class="text-decoration-none text-dark" aria-label="Sort by Submitted {{ sortBy == 'submitted' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
+                                        {{ 'Submitted'|trans }}
+                                        {% if sortBy == 'submitted' %}
+                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th class="text-center sortable-header" role="columnheader" aria-sort="{{ sortBy == 'pending' ? (sortOrder == 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                    <a href="{{ path('approval_statistics_report', {
+                                        'sort': 'pending',
+                                        'order': sortBy == 'pending' and sortOrder == 'asc' ? 'desc' : 'asc'
+                                    }) }}" class="text-decoration-none text-dark" aria-label="Sort by Pending {{ sortBy == 'pending' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
+                                        {{ 'Pending'|trans }}
+                                        {% if sortBy == 'pending' %}
+                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th class="text-center sortable-header" role="columnheader" aria-sort="{{ sortBy == 'approved' ? (sortOrder == 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                    <a href="{{ path('approval_statistics_report', {
+                                        'sort': 'approved',
+                                        'order': sortBy == 'approved' and sortOrder == 'asc' ? 'desc' : 'asc'
+                                    }) }}" class="text-decoration-none text-dark" aria-label="Sort by Approved {{ sortBy == 'approved' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
+                                        {{ 'Approved'|trans }}
+                                        {% if sortBy == 'approved' %}
+                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th class="text-center sortable-header" role="columnheader" aria-sort="{{ sortBy == 'denied' ? (sortOrder == 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                    <a href="{{ path('approval_statistics_report', {
+                                        'sort': 'denied',
+                                        'order': sortBy == 'denied' and sortOrder == 'asc' ? 'desc' : 'asc'
+                                    }) }}" class="text-decoration-none text-dark" aria-label="Sort by Denied {{ sortBy == 'denied' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
+                                        {{ 'Denied'|trans }}
+                                        {% if sortBy == 'denied' %}
+                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th class="text-center sortable-header" role="columnheader" aria-sort="{{ sortBy == 'total' ? (sortOrder == 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                    <a href="{{ path('approval_statistics_report', {
+                                        'sort': 'total',
+                                        'order': sortBy == 'total' and sortOrder == 'asc' ? 'desc' : 'asc'
+                                    }) }}" class="text-decoration-none text-dark" aria-label="Sort by Total {{ sortBy == 'total' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
+                                        {{ 'Total'|trans }}
+                                        {% if sortBy == 'total' %}
+                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -140,9 +349,21 @@
                 </div>
 
                 <div class="mt-3">
-                    <small class="text-muted">
-                        {{ 'Report generated for date'|trans }}: {{ selectedDate|date('Y-m-d') }}
-                    </small>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                {{ 'Report generated for date'|trans }}: {{ selectedDate|date('Y-m-d') }}
+                            </small>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <small class="text-muted">
+                                {% if sortBy and sortOrder %}
+                                    {{ 'Sorted by'|trans }}: <strong>{{ sortBy|trans }}</strong> 
+                                    ({{ sortOrder == 'asc' ? 'ascending'|trans : 'descending'|trans }})
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
                 </div>
             {% else %}
                 <div class="alert alert-info">
@@ -151,4 +372,88 @@
             {% endif %}
         </div>
     </div>
+{% endblock %} 
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add keyboard navigation for sortable headers
+            const sortableHeaders = document.querySelectorAll('.sortable-header');
+            
+            sortableHeaders.forEach(header => {
+                header.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const link = header.querySelector('a');
+                        if (link) {
+                            link.click();
+                        }
+                    }
+                });
+                
+                // Add focus styles
+                header.addEventListener('focus', function() {
+                    this.style.outline = '2px solid #007bff';
+                    this.style.outlineOffset = '2px';
+                });
+                
+                header.addEventListener('blur', function() {
+                    this.style.outline = 'none';
+                });
+            });
+            
+            // Add tooltip for better UX
+            sortableHeaders.forEach(header => {
+                const link = header.querySelector('a');
+                if (link) {
+                    const currentSort = link.getAttribute('href').includes('sort=') ? 
+                        link.getAttribute('href').match(/sort=([^&]+)/)[1] : '';
+                    const currentOrder = link.getAttribute('href').includes('order=') ? 
+                        link.getAttribute('href').match(/order=([^&]+)/)[1] : '';
+                    
+                    let tooltipText = 'Click to sort by ' + currentSort;
+                    if (currentOrder === 'asc') {
+                        tooltipText += ' (descending)';
+                    } else {
+                        tooltipText += ' (ascending)';
+                    }
+                    
+                    link.setAttribute('title', tooltipText);
+                }
+            });
+            
+            // Add loading state when sorting
+            sortableHeaders.forEach(header => {
+                const link = header.querySelector('a');
+                if (link) {
+                    link.addEventListener('click', function(e) {
+                        // Add loading state to all headers
+                        sortableHeaders.forEach(h => h.classList.add('sorting'));
+                        
+                        // Remove loading state after a short delay (simulates page load)
+                        setTimeout(() => {
+                            sortableHeaders.forEach(h => h.classList.remove('sorting'));
+                        }, 500);
+                    });
+                }
+            });
+            
+            // Add smooth scrolling to top when sorting (if page is long)
+            sortableHeaders.forEach(header => {
+                const link = header.querySelector('a');
+                if (link) {
+                    link.addEventListener('click', function(e) {
+                        // Smooth scroll to top if page is scrolled down
+                        if (window.scrollY > 100) {
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 {% endblock %} 
