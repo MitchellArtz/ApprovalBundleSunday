@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use KimaiPlugin\ApprovalBundle\Form\ApprovalStatisticsForm;
 
 #[Route(path: '/approval')]
 class ApprovalStatisticsReportController extends BaseApprovalController
@@ -33,12 +34,42 @@ class ApprovalStatisticsReportController extends BaseApprovalController
     ) {
     }
 
-    #[Route(path: '/statistics', name: 'approval_statistics_report', methods: ['GET'])]
+    #[Route(path: '/statistics', name: 'approval_statistics_report', methods: ['GET', 'POST'])]
     #[IsGranted('view_hours_approval')]
     public function approvalStatisticsReport(Request $request): Response
     {
+        // Create the form
+        $form = $this->createForm(ApprovalStatisticsForm::class);
+        $form->handleRequest($request);
+
+        // Get the selected date from form or use current date as default
+        $selectedDate = new DateTime();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formData = $form->getData();
+            if (isset($formData['date']) && $formData['date'] instanceof DateTime) {
+                $selectedDate = $formData['date'];
+            }
+        }
+
         $users = $this->getUsers();
         $statistics = [];
+
+        if (empty($users)) {
+            // No users found, return empty statistics
+            $page = new PageSetup('approval.statistics.report');
+            $page->setHelp('approval.statistics.help');
+
+            return $this->render('@Approval/approval_statistics.html.twig', [
+                'page_setup' => $page,
+                'statistics' => [],
+                'currentUser' => $this->getUser(),
+                'current_tab' => 'approval_statistics',
+                'sortBy' => 'user',
+                'sortOrder' => 'asc',
+                'form' => $form->createView(),
+                'selectedDate' => $selectedDate,
+            ] + $this->getDefaultTemplateParams($this->settingsTool));
+        }
 
         foreach ($users as $user) {
             $userStats = $this->calculateUserApprovalStatistics($user);
@@ -57,19 +88,33 @@ class ApprovalStatisticsReportController extends BaseApprovalController
         $sortBy = $request->query->get('sort', 'user');
         $sortOrder = $request->query->get('order', 'asc');
 
+        // Debug output
+        error_log("Sort parameters - sortBy: $sortBy, sortOrder: $sortOrder");
+
+        // Validate sorting parameters
+        $validSortFields = ['user', 'unsubmitted', 'submitted', 'pending', 'approved', 'denied', 'total'];
+        if (!in_array($sortBy, $validSortFields)) {
+            $sortBy = 'user';
+        }
+        if (!in_array($sortOrder, ['asc', 'desc'])) {
+            $sortOrder = 'asc';
+        }
+
         // Sort statistics based on parameters
         $this->sortStatistics($statistics, $sortBy, $sortOrder);
 
         $page = new PageSetup('approval.statistics.report');
         $page->setHelp('approval.statistics.help');
 
-        return $this->render('@Approval/approval_statistics_report.html.twig', [
+        return $this->render('@Approval/approval_statistics.html.twig', [
             'page_setup' => $page,
             'statistics' => $statistics,
             'currentUser' => $this->getUser(),
             'current_tab' => 'approval_statistics',
             'sortBy' => $sortBy,
             'sortOrder' => $sortOrder,
+            'form' => $form->createView(),
+            'selectedDate' => $selectedDate,
         ] + $this->getDefaultTemplateParams($this->settingsTool));
     }
 
@@ -157,24 +202,36 @@ class ApprovalStatisticsReportController extends BaseApprovalController
 
     private function sortStatistics(array &$statistics, string $sortBy, string $sortOrder): void
     {
-        $multiplier = ($sortOrder === 'desc') ? -1 : 1;
+        if (empty($statistics)) {
+            return;
+        }
 
-        usort($statistics, function ($a, $b) use ($sortBy, $multiplier) {
-            switch ($sortBy) {
-                case 'user':
-                    $valueA = $a['user']->getDisplayName() ?: $a['user']->getUsername();
-                    $valueB = $b['user']->getDisplayName() ?: $b['user']->getUsername();
-                    return $multiplier * strcmp($valueA, $valueB);
-                case 'unsubmitted':
-                case 'submitted':
-                case 'pending':
-                case 'approved':
-                case 'denied':
-                case 'total':
-                    return $multiplier * ($a[$sortBy] <=> $b[$sortBy]);
-                default:
-                    return 0;
-            }
-        });
+        $multiplier = ($sortOrder === 'desc') ? -1 : 1;
+        
+        error_log("Sorting statistics by: $sortBy, order: $sortOrder, multiplier: $multiplier");
+
+        try {
+            usort($statistics, function ($a, $b) use ($sortBy, $multiplier) {
+                switch ($sortBy) {
+                    case 'user':
+                        $valueA = $a['user']->getDisplayName() ?: $a['user']->getUsername();
+                        $valueB = $b['user']->getDisplayName() ?: $b['user']->getUsername();
+                        return $multiplier * strcmp($valueA, $valueB);
+                    case 'unsubmitted':
+                    case 'submitted':
+                    case 'pending':
+                    case 'approved':
+                    case 'denied':
+                    case 'total':
+                        return $multiplier * ($a[$sortBy] <=> $b[$sortBy]);
+                    default:
+                        return 0;
+                }
+            });
+            
+            error_log("Sorting completed. First user: " . $statistics[0]['user']->getUsername());
+        } catch (\Exception $e) {
+            error_log("Error sorting statistics: " . $e->getMessage());
+        }
     }
 } 

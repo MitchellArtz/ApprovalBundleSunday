@@ -40,18 +40,33 @@
         
         .sort-indicator {
             margin-left: 5px;
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            text-align: center;
+            line-height: 16px;
         }
         
-        .sort-indicator.fa-sort-up,
-        .sort-indicator.fa-sort-down {
+        /* Fallback for when FontAwesome is not available */
+        .sort-indicator:before {
+            content: '↕';
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .sort-indicator.fa-arrow-up:before {
+            content: '↑';
             color: #007bff;
-            animation: sortIndicator 0.3s ease-in-out;
         }
         
-        @keyframes sortIndicator {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        .sort-indicator.fa-arrow-down:before {
+            content: '↓';
+            color: #007bff;
+        }
+        
+        .sort-indicator.fa-arrows-alt-v:before {
+            content: '↕';
+            color: #6c757d;
         }
         
         .table th.sortable-header {
@@ -138,6 +153,17 @@
                 <button type="submit" class="btn btn-primary ml-2">{{ 'Generate Report'|trans }}</button>
             </form>
 
+            <!-- Debug information -->
+            {% if app.debug %}
+                <div class="alert alert-info">
+                    <strong>Debug Info:</strong><br>
+                    Current Sort: {{ sortBy }} ({{ sortOrder }})<br>
+                    Statistics Count: {{ statistics|length }}<br>
+                    First User: {{ statistics[0].user.username ?? 'N/A' }}<br>
+                    URL: {{ app.request.uri }}
+                </div>
+            {% endif %}
+
             {% if statistics is not empty %}
                 <div class="table-responsive">
                     <table class="table table-hover dataTable">
@@ -149,10 +175,11 @@
                                         'order': sortBy == 'user' and sortOrder == 'asc' ? 'desc' : 'asc'
                                     }) }}" class="text-decoration-none text-dark" aria-label="Sort by User {{ sortBy == 'user' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
                                         {{ 'User'|trans }}
+
                                         {% if sortBy == 'user' %}
-                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                            <i class="fa fa-arrow-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
                                         {% else %}
-                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                            <i class="fa fa-arrows-alt-v sort-indicator text-muted" aria-hidden="true"></i>
                                         {% endif %}
                                     </a>
                                 </th>
@@ -163,9 +190,9 @@
                                     }) }}" class="text-decoration-none text-dark" aria-label="Sort by Unsubmitted {{ sortBy == 'unsubmitted' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
                                         {{ 'Unsubmitted'|trans }}
                                         {% if sortBy == 'unsubmitted' %}
-                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                            <i class="fa fa-arrow-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
                                         {% else %}
-                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                            <i class="fa fa-arrows-alt-v sort-indicator text-muted" aria-hidden="true"></i>
                                         {% endif %}
                                     </a>
                                 </th>
@@ -176,9 +203,9 @@
                                     }) }}" class="text-decoration-none text-dark" aria-label="Sort by Submitted {{ sortBy == 'submitted' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
                                         {{ 'Submitted'|trans }}
                                         {% if sortBy == 'submitted' %}
-                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                            <i class="fa fa-arrow-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
                                         {% else %}
-                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                            <i class="fa fa-arrows-alt-v sort-indicator text-muted" aria-hidden="true"></i>
                                         {% endif %}
                                     </a>
                                 </th>
@@ -189,9 +216,9 @@
                                     }) }}" class="text-decoration-none text-dark" aria-label="Sort by Pending {{ sortBy == 'pending' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
                                         {{ 'Pending'|trans }}
                                         {% if sortBy == 'pending' %}
-                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                            <i class="fa fa-arrow-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
                                         {% else %}
-                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                            <i class="fa fa-arrows-alt-v sort-indicator text-muted" aria-hidden="true"></i>
                                         {% endif %}
                                     </a>
                                 </th>
@@ -202,9 +229,9 @@
                                     }) }}" class="text-decoration-none text-dark" aria-label="Sort by Approved {{ sortBy == 'approved' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
                                         {{ 'Approved'|trans }}
                                         {% if sortBy == 'approved' %}
-                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                            <i class="fa fa-arrow-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
                                         {% else %}
-                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                            <i class="fa fa-arrows-alt-v sort-indicator text-muted" aria-hidden="true"></i>
                                         {% endif %}
                                     </a>
                                 </th>
@@ -215,9 +242,9 @@
                                     }) }}" class="text-decoration-none text-dark" aria-label="Sort by Denied {{ sortBy == 'denied' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
                                         {{ 'Denied'|trans }}
                                         {% if sortBy == 'denied' %}
-                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                            <i class="fa fa-arrow-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
                                         {% else %}
-                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                            <i class="fa fa-arrows-alt-v sort-indicator text-muted" aria-hidden="true"></i>
                                         {% endif %}
                                     </a>
                                 </th>
@@ -228,9 +255,9 @@
                                     }) }}" class="text-decoration-none text-dark" aria-label="Sort by Total {{ sortBy == 'total' and sortOrder == 'asc' ? 'descending' : 'ascending' }}">
                                         {{ 'Total'|trans }}
                                         {% if sortBy == 'total' %}
-                                            <i class="fas fa-sort-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
+                                            <i class="fa fa-arrow-{{ sortOrder == 'asc' ? 'up' : 'down' }} sort-indicator" aria-hidden="true"></i>
                                         {% else %}
-                                            <i class="fas fa-sort sort-indicator text-muted" aria-hidden="true"></i>
+                                            <i class="fa fa-arrows-alt-v sort-indicator text-muted" aria-hidden="true"></i>
                                         {% endif %}
                                     </a>
                                 </th>
