@@ -598,10 +598,6 @@
         <source>label.absence_other</source>
         <target>Sonstiges</target>
       </trans-unit>
-      <trans-unit id="public_holiday" resname="label.public_holiday">
-        <source>label.public_holiday</source>
-        <target>Feiertag</target>
-      </trans-unit>
 
     </body>
   </file>

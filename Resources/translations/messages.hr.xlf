@@ -586,10 +586,6 @@
         <source>label.absence_other</source>
         <target>Ostalo</target>
       </trans-unit>
-      <trans-unit id="public_holiday" resname="label.public_holiday">
-        <source>label.public_holiday</source>
-        <target>Državni praznik</target>
-      </trans-unit>
 
     </body>
   </file>
