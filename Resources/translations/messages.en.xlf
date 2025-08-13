@@ -579,6 +579,26 @@
           consider these positive or negative values.
         </target>
       </trans-unit>
+      <trans-unit id="absence_legend" resname="label.absence_legend">
+        <source>label.absence_legend</source>
+        <target>Absence Types</target>
+      </trans-unit>
+      <trans-unit id="absence_sick" resname="label.absence_sick">
+        <source>label.absence_sick</source>
+        <target>Sick Leave</target>
+      </trans-unit>
+      <trans-unit id="absence_holiday" resname="label.absence_holiday">
+        <source>label.absence_holiday</source>
+        <target>Holiday</target>
+      </trans-unit>
+      <trans-unit id="absence_timeoff" resname="label.absence_timeoff">
+        <source>label.absence_timeoff</source>
+        <target>Time Off</target>
+      </trans-unit>
+      <trans-unit id="absence_other" resname="label.absence_other">
+        <source>label.absence_other</source>
+        <target>Other</target>
+      </trans-unit>
 
     </body>
   </file>

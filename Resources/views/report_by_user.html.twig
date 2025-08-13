@@ -174,7 +174,21 @@
                             {% if errors[(day | date_format('Y-m-d'))] is defined and (errors[(day | date_format('Y-m-d'))] | length) > 0 %}
                                 <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
                                       title="{{ errors[(day | date_format('Y-m-d'))] | join('\n\n') }}">
-                                        <i class="fa fa-1x fa-exclamation-circle" style="color: red"></i>
+                                    <i class="fa fa-1x fa-exclamation-circle" style="color: red"></i>
+                                </span>
+                            {% endif %}
+
+                            {% set dayKey = day|date_format('Y-m-d') %}
+                            {% if absences is defined and absences[dayKey] is defined %}
+                                {% set absence = absences[dayKey] %}
+                                <span class="d-inline-block ms-1" tabindex="0" data-bs-toggle="tooltip"
+                                      title="{{ absence.type|title }} - {{ absence.comment }}{% if absence.halfDay %} (Half Day){% endif %}"
+                                      style="cursor: help;">
+                                    <i class="{{ absence.type == 'sickness' ? 'fas fa-user-injured text-danger' : 
+                                               absence.type == 'holiday' ? 'fas fa-umbrella-beach text-success' : 
+                                               absence.type == 'time_off' ? 'fas fa-calendar-day text-info' : 
+                                               'fas fa-calendar-minus text-warning' }}"
+                                       style="font-size: 0.9em; opacity: 0.8;"></i>
                                 </span>
                             {% endif %}
                         </td>
@@ -216,6 +230,51 @@
 
             </table>
         </div>
+        
+        <!-- Absence Legend -->
+        {% if absences is defined and absences|length > 0 %}
+            <div class="mt-3 p-2 border rounded absence-legend">
+                <small class="text-light">
+                    <strong>{{ 'label.absence_legend'|trans }}:</strong>
+                    <span class="ms-3">
+                        <i class="fas fa-user-injured text-danger me-1" title="Sick Leave"></i> {{ 'label.absence_sick'|trans }}
+                    </span>
+                    <span class="ms-3">
+                        <i class="fas fa-umbrella-beach text-success me-1" title="Holiday"></i> {{ 'label.absence_holiday'|trans }}
+                    </span>
+                    <span class="ms-3">
+                        <i class="fas fa-calendar-day text-info me-1" title="Time Off"></i> {{ 'label.absence_timeoff'|trans }}
+                    </span>
+                    <span class="ms-3">
+                        <i class="fas fa-calendar-minus text-warning me-1" title="Other"></i> {{ 'label.absence_other'|trans }}
+                    </span>
+                </small>
+            </div>
+            
+            <style>
+                .absence-legend {
+                    background-color: rgba(255, 255, 255, 0.05) !important;
+                    border-color: rgba(255, 255, 255, 0.1) !important;
+                    backdrop-filter: blur(10px);
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                }
+                
+                .absence-legend:hover {
+                    background-color: rgba(255, 255, 255, 0.08) !important;
+                    border-color: rgba(255, 255, 255, 0.15) !important;
+                }
+                
+                /* Ensure text is readable in both light and dark themes */
+                .absence-legend small {
+                    color: inherit !important;
+                }
+                
+                .absence-legend strong {
+                    color: #ffffff !important;
+                    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+                }
+            </style>
+        {% endif %}
     </div>
 
     {% if activityTotals is defined and activityTotals|length > 0 %}

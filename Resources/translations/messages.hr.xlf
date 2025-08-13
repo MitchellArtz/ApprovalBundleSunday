@@ -566,6 +566,26 @@
         <source>approval.status.denied</source>
         <target>Odbijeno</target>
       </trans-unit>
+      <trans-unit id="absence_legend" resname="label.absence_legend">
+        <source>label.absence_legend</source>
+        <target>Tipovi odsutnosti</target>
+      </trans-unit>
+      <trans-unit id="absence_sick" resname="label.absence_sick">
+        <source>label.absence_sick</source>
+        <target>Bolest</target>
+      </trans-unit>
+      <trans-unit id="absence_holiday" resname="label.absence_holiday">
+        <source>label.absence_holiday</source>
+        <target>Odmor</target>
+      </trans-unit>
+      <trans-unit id="absence_timeoff" resname="label.absence_timeoff">
+        <source>label.absence_timeoff</source>
+        <target>Slobodno vrijeme</target>
+      </trans-unit>
+      <trans-unit id="absence_other" resname="label.absence_other">
+        <source>label.absence_other</source>
+        <target>Ostalo</target>
+      </trans-unit>
 
     </body>
   </file>

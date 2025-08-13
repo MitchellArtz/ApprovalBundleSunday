@@ -34,6 +34,7 @@ use KimaiPlugin\ApprovalBundle\Repository\ApprovalRepository;
 use KimaiPlugin\ApprovalBundle\Repository\ApprovalTimesheetRepository;
 use KimaiPlugin\ApprovalBundle\Repository\ApprovalWorkdayHistoryRepository;
 use KimaiPlugin\ApprovalBundle\Repository\ReportRepository;
+use KimaiPlugin\ApprovalBundle\Toolbox\AbsenceService;
 use KimaiPlugin\ApprovalBundle\Toolbox\BreakTimeCheckToolGER;
 use KimaiPlugin\ApprovalBundle\Toolbox\Formatting;
 use KimaiPlugin\ApprovalBundle\Toolbox\SecurityTool;
@@ -59,7 +60,8 @@ class WeekReportController extends BaseApprovalController
         private TimesheetRepository $timesheetRepository,
         private ApprovalTimesheetRepository $approvalTimesheetRepository,
         private BreakTimeCheckToolGER $breakTimeCheckToolGER,
-        private ReportRepository $reportRepository
+        private ReportRepository $reportRepository,
+        private ?AbsenceService $absenceService = null
     ) {
     }
 
@@ -147,6 +149,17 @@ class WeekReportController extends BaseApprovalController
 
         [$timesheets, $errors] = $this->getTimesheets($selectedUser, $start, $end);
 
+        // Get absences for the selected user in the week period
+        $absences = [];
+        if ($this->absenceService !== null) {
+            try {
+                $absences = $this->absenceService->getAbsencesByDateForUserInPeriod($selectedUser, $start, $end);
+            } catch (\Exception $e) {
+                // If absence service fails, continue without absences
+                // The template will handle empty absences gracefully
+            }
+        }
+
         $selectedUserSundayIssue = !$selectedUser->isFirstDayOfWeekSunday();
         $currentUserSundayIssue = !$this->getUser()->isFirstDayOfWeekSunday();
 
@@ -188,7 +201,8 @@ class WeekReportController extends BaseApprovalController
             'projectTotals' => $projectTotals,
             'activityTotals' => $activityTotals,
             'projectTotalDuration' => $projectTotalDuration,
-            'activityTotalDuration' => $activityTotalDuration
+            'activityTotalDuration' => $activityTotalDuration,
+            'absences' => $absences
         ] + $this->getDefaultTemplateParams($this->settingsTool));
     }
 
