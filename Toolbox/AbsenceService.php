@@ -13,7 +13,9 @@ use App\Entity\User;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use KimaiPlugin\WorkContractBundle\Entity\Absence;
+use KimaiPlugin\WorkContractBundle\Entity\PublicHoliday;
 use KimaiPlugin\WorkContractBundle\Repository\AbsenceRepository;
+use KimaiPlugin\WorkContractBundle\Repository\PublicHolidayRepository;
 
 class AbsenceService
 {
@@ -66,7 +68,42 @@ class AbsenceService
     }
 
     /**
-     * Get absences organized by date for a user within a date range
+     * Get public holidays for a user within a date range
+     *
+     * @param User $user
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return array
+     */
+    public function getPublicHolidaysForUserInPeriod(User $user, DateTime $start, DateTime $end): array
+    {
+        // Check if WorkContractBundle is available
+        if (!$this->isAvailable) {
+            return [];
+        }
+
+        try {
+            /** @var PublicHolidayRepository $publicHolidayRepository */
+            $publicHolidayRepository = $this->entityManager->getRepository('KimaiPlugin\WorkContractBundle\Entity\PublicHoliday');
+            
+            // Get the user's public holiday group ID
+            $holidayGroupId = null;
+            if (method_exists($user, 'getPublicHolidayGroup')) {
+                $holidayGroup = $user->getPublicHolidayGroup();
+                $holidayGroupId = $holidayGroup ? $holidayGroup->getId() : null;
+            }
+            
+            // Use the existing findHolidaysForPeriod method from the repository
+            return $publicHolidayRepository->findHolidaysForPeriod($start, $end, $holidayGroupId);
+        } catch (\Exception $e) {
+            // Log the error but don't break the application
+            error_log('AbsenceService: Error fetching public holidays: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get absences and public holidays organized by date for a user within a date range
      *
      * @param User $user
      * @param DateTime $start
@@ -76,19 +113,36 @@ class AbsenceService
     public function getAbsencesByDateForUserInPeriod(User $user, DateTime $start, DateTime $end): array
     {
         $absences = $this->getAbsencesForUserInPeriod($user, $start, $end);
-        $absencesByDate = [];
+        $publicHolidays = $this->getPublicHolidaysForUserInPeriod($user, $start, $end);
+        $combinedByDate = [];
 
+        // Process absences
         foreach ($absences as $absence) {
             $dateKey = $absence->getDate()->format('Y-m-d');
-            $absencesByDate[$dateKey] = [
-                'type' => $absence->getType(),
+            $combinedByDate[$dateKey] = [
+                'type' => 'absence',
+                'absenceType' => $absence->getType(),
                 'comment' => $absence->getComment(),
                 'halfDay' => $absence->isHalfDay(),
-                'duration' => $absence->getDuration()
+                'duration' => $absence->getDuration(),
+                'name' => $this->getAbsenceTypeLabel($absence->getType())
             ];
         }
 
-        return $absencesByDate;
+        // Process public holidays (these take precedence over absences)
+        foreach ($publicHolidays as $publicHoliday) {
+            $dateKey = $publicHoliday->getDate()->format('Y-m-d');
+            $combinedByDate[$dateKey] = [
+                'type' => 'public_holiday',
+                'absenceType' => 'public_holiday',
+                'comment' => $publicHoliday->getName(),
+                'halfDay' => $publicHoliday->isHalfDay(),
+                'duration' => null,
+                'name' => $publicHoliday->getName()
+            ];
+        }
+
+        return $combinedByDate;
     }
 
     /**
@@ -130,5 +184,22 @@ class AbsenceService
         $commentText = !empty($comment) ? " - $comment" : '';
 
         return $typeLabel . $halfDayText . $commentText;
+    }
+
+    /**
+     * Get absence type label for display
+     *
+     * @param string $type
+     * @return string
+     */
+    private function getAbsenceTypeLabel(string $type): string
+    {
+        return match ($type) {
+            Absence::SICKNESS => 'Sick Leave',
+            Absence::HOLIDAY => 'Holiday',
+            Absence::TIME_OFF => 'Time Off',
+            Absence::OTHER => 'Other',
+            default => 'Absence'
+        };
     }
 } 

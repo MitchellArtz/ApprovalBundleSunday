@@ -182,13 +182,17 @@
                             {% if absences is defined and absences[dayKey] is defined %}
                                 {% set absence = absences[dayKey] %}
                                 <span class="d-inline-block ms-1" tabindex="0" data-bs-toggle="tooltip"
-                                      title="{{ absence.type|title }} - {{ absence.comment }}{% if absence.halfDay %} (Half Day){% endif %}"
+                                      title="{{ absence.name }} - {{ absence.comment }}{% if absence.halfDay %} (Half Day){% endif %}"
                                       style="cursor: help;">
-                                    <i class="{{ absence.type == 'sickness' ? 'fas fa-user-injured text-danger' : 
-                                               absence.type == 'holiday' ? 'fas fa-umbrella-beach text-success' : 
-                                               absence.type == 'time_off' ? 'fas fa-calendar-day text-info' : 
-                                               'fas fa-calendar-minus text-warning' }}"
-                                       style="font-size: 0.9em; opacity: 0.8;"></i>
+                                    {% if absence.type == 'public_holiday' %}
+                                        <i class="fas fa-flag text-primary" style="font-size: 0.9em; opacity: 0.8;"></i>
+                                    {% else %}
+                                        <i class="{{ absence.absenceType == 'sickness' ? 'fas fa-user-injured text-danger' : 
+                                                   absence.absenceType == 'holiday' ? 'fas fa-umbrella-beach text-success' : 
+                                                   absence.absenceType == 'time_off' ? 'fas fa-calendar-day text-info' : 
+                                                   'fas fa-calendar-minus text-warning' }}"
+                                           style="font-size: 0.9em; opacity: 0.8;"></i>
+                                    {% endif %}
                                 </span>
                             {% endif %}
                         </td>
@@ -236,6 +240,9 @@
             <div class="mt-3 p-2 border rounded absence-legend">
                 <small class="text-light">
                     <strong>{{ 'label.absence_legend'|trans }}:</strong>
+                    <span class="ms-3">
+                        <i class="fas fa-flag text-primary me-1" title="Public Holiday"></i> {{ 'label.public_holiday'|trans }}
+                    </span>
                     <span class="ms-3">
                         <i class="fas fa-user-injured text-danger me-1" title="Sick Leave"></i> {{ 'label.absence_sick'|trans }}
                     </span>
