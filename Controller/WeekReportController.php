@@ -81,6 +81,12 @@ class WeekReportController extends BaseApprovalController
         $today = new DateTime('today');
         $sundayStart = (clone $today)->modify('last sunday');
         $values->setDate($sundayStart);
+        
+        // Check if the initial date is Monday and adjust to previous Sunday if needed
+        $adjustedDate = $this->adjustMondayToPreviousSunday($values->getDate());
+        if ($adjustedDate !== $values->getDate()) {
+            $values->setDate($adjustedDate);
+        }
 
         $form = $this->createFormForGetRequest(WeekByUserForm::class, $values, [
             'timezone' => $dateTimeFactory->getTimezone()->getName(),
@@ -100,9 +106,17 @@ class WeekReportController extends BaseApprovalController
             $sundayStart = (clone $today)->modify('last sunday');
             $values->setDate($sundayStart);
         }
+        
+        // Check if the selected date is Monday and adjust to previous Sunday if needed
+        $adjustedDate = $this->adjustMondayToPreviousSunday($values->getDate());
+        if ($adjustedDate !== $values->getDate()) {
+            $values->setDate($adjustedDate);
+        }
 
         // Force Sunday as start of week regardless of user preference
         $start = clone $values->getDate();
+        // Check if it's Monday and adjust to previous Sunday if needed
+        $start = $this->adjustMondayToPreviousSunday($start);
         if ($start->format('D') !== 'Sun') {
             $start->modify('last sunday');
         }
@@ -163,11 +177,8 @@ class WeekReportController extends BaseApprovalController
         $selectedUserSundayIssue = !$selectedUser->isFirstDayOfWeekSunday();
         $currentUserSundayIssue = !$this->getUser()->isFirstDayOfWeekSunday();
 
+        // Overtime calculation removed as requested
         $overtimeDuration = null;
-        if ($this->settingsTool->isOvertimeCheckActive()) {
-            // use actual year display, in case of "starting", use first approval date
-            $overtimeDuration = $this->approvalRepository->getExpectedActualDurationsForYear($selectedUser, $end);
-        }
 
         $canManageHimself = $this->securityTool->canViewAllApprovals() || ($this->securityTool->canViewTeamApprovals() &&
             ($this->settingsTool->getConfiguration(ConfigEnum::APPROVAL_TEAMLEAD_SELF_APPROVE_NY) == '1'));
@@ -341,6 +352,17 @@ class WeekReportController extends BaseApprovalController
         }
 
         return $this->redirectToRoute('approval_bundle_settings_workday');
+    }
+
+    private function adjustMondayToPreviousSunday(DateTime $date): DateTime
+    {
+        // Check if the date is Monday
+        if ($date->format('D') === 'Mon') {
+            // If it's Monday, adjust to the previous Sunday
+            return (clone $date)->modify('-1 day');
+        }
+        
+        return $date;
     }
 
     private function createSettingsForm(Request $request): FormView

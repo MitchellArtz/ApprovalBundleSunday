@@ -194,16 +194,7 @@
                         </td>
                     {% endfor %}
                 </tr>
-                {% if yearDuration is not null %}
-                    {% set yearDiff = yearDuration.actualDuration - yearDuration.expectedDuration + yearDuration.manualAdoption %}
-                    <tr class="summary">
-                    <td>{{ 'label.yearly_overtime'|trans }}</td>
-                    <td class="text-nowrap text-center total {% if yearDiff < 0 %} text-danger{% endif %}">{{ yearDiff|duration }}</td>
-                    {% for day in days.dateTimes %}
-                        <td></td>
-                    {% endfor %}
-                </tr>
-                {% endif %}
+                {# Overtime yearly display removed as requested #}
                 {% if dailyExpectedDurations is defined %}
                     <tr class="summary">
                         <td>{{ 'label.daily_difference'|trans }}</td>
