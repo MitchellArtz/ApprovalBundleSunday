@@ -81,12 +81,6 @@ class WeekReportController extends BaseApprovalController
         $today = new DateTime('today');
         $sundayStart = (clone $today)->modify('last sunday');
         $values->setDate($sundayStart);
-        
-        // Check if the initial date is Monday and adjust to previous Sunday if needed
-        $adjustedDate = $this->adjustMondayToPreviousSunday($values->getDate());
-        if ($adjustedDate !== $values->getDate()) {
-            $values->setDate($adjustedDate);
-        }
 
         $form = $this->createFormForGetRequest(WeekByUserForm::class, $values, [
             'timezone' => $dateTimeFactory->getTimezone()->getName(),
@@ -106,17 +100,9 @@ class WeekReportController extends BaseApprovalController
             $sundayStart = (clone $today)->modify('last sunday');
             $values->setDate($sundayStart);
         }
-        
-        // Check if the selected date is Monday and adjust to previous Sunday if needed
-        $adjustedDate = $this->adjustMondayToPreviousSunday($values->getDate());
-        if ($adjustedDate !== $values->getDate()) {
-            $values->setDate($adjustedDate);
-        }
 
         // Force Sunday as start of week regardless of user preference
         $start = clone $values->getDate();
-        // Check if it's Monday and adjust to previous Sunday if needed
-        $start = $this->adjustMondayToPreviousSunday($start);
         if ($start->format('D') !== 'Sun') {
             $start->modify('last sunday');
         }
@@ -124,15 +110,21 @@ class WeekReportController extends BaseApprovalController
         date_time_set($end, 23, 59, 59);
         
         $selectedUser = $values->getUser();
-        $startWeek = $values->getDate();
 
-        $previous = clone $start;
+        // Apply Monday-to-Sunday adjustment specifically for approval week calculations
+        $approvalStart = $this->adjustApprovalWeekStart($start);
+        $approvalEnd = (clone $approvalStart)->modify('+6 days');
+        date_time_set($approvalEnd, 23, 59, 59);
+        
+        $startWeek = $approvalStart; // Use adjusted date for approval history
+
+        $previous = clone $approvalStart;
         $previous->modify('-1 week');
 
-        $next = clone $start;
+        $next = clone $approvalStart;
         $next->modify('+1 week');
-
-        $approvals = $this->approvalRepository->findApprovalForUser($selectedUser, $start, $end);
+        
+        $approvals = $this->approvalRepository->findApprovalForUser($selectedUser, $approvalStart, $approvalEnd);
         $data = $this->reportRepository->getDailyStatistic($selectedUser, $start, $end);
         $status = '';
         if ($approvals) {
@@ -142,11 +134,11 @@ class WeekReportController extends BaseApprovalController
             }
             $expectedDuration = $approvals->getExpectedDuration();
         } else {
-            $expectedDuration = $this->approvalRepository->calculateExpectedDurationByUserAndDate($selectedUser, $start, $end);
+            $expectedDuration = $this->approvalRepository->calculateExpectedDurationByUserAndDate($selectedUser, $approvalStart, $approvalEnd);
         }
 
         // Get daily expected durations for subtotal calculation
-        $dailyExpectedDurations = $this->approvalRepository->getDailyExpectedDurations($selectedUser, $start, $end);
+        $dailyExpectedDurations = $this->approvalRepository->getDailyExpectedDurations($selectedUser, $approvalStart, $approvalEnd);
 
         // Get project and activity totals for summary tables
         $projectTotals = $this->reportRepository->getProjectTotals($selectedUser, $start, $end);
@@ -185,13 +177,13 @@ class WeekReportController extends BaseApprovalController
 
         return $this->render('@Approval/report_by_user.html.twig', [
             'approve' => $this->parseToHistoryView($selectedUser, $startWeek),
-            'week' => $this->formatting->parseDate($start),
+            'week' => $this->formatting->parseDate($approvalStart),
             'box_id' => 'user-week-report-box',
             'form' => $form->createView(),
             'days' => new DailyStatistic($start, $end, $selectedUser),
             'rows' => $data,
             'user' => $selectedUser,
-            'current' => $start,
+            'current' => $approvalStart,
             'next' => $next,
             'previous' => $previous,
             'approveId' => empty($approvals) ? 0 : $approvals->getId(),
@@ -354,11 +346,15 @@ class WeekReportController extends BaseApprovalController
         return $this->redirectToRoute('approval_bundle_settings_workday');
     }
 
-    private function adjustMondayToPreviousSunday(DateTime $date): DateTime
+    /**
+     * Adjusts a date to the previous Sunday if it's Monday, specifically for approval week calculations.
+     * This only affects approval-related date logic, not general Kimai functionality.
+     */
+    private function adjustApprovalWeekStart(DateTime $date): DateTime
     {
-        // Check if the date is Monday
+        // Only apply Monday-to-Sunday adjustment for approval weeks
         if ($date->format('D') === 'Mon') {
-            // If it's Monday, adjust to the previous Sunday
+            // If it's Monday, adjust to the previous Sunday for approval week calculations
             return (clone $date)->modify('-1 day');
         }
         
